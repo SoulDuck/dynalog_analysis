@@ -1,5 +1,7 @@
 import numpy as np
 import os , sys ,glob
+import pickle
+import scipy.io as sio
 def list2dic(index, header, ep_ , ap_ , pfp_ , npf_):
     return_dic={}
     return_dic['index']=index
@@ -20,7 +22,8 @@ def analysis_dinalog():
     print log_paths[0]
     for path in log_paths:
         index=path.split('/')[-1].split('.')[0]
-        os.mkdir('./divided_log/'+index)
+        if not os.path.isdir('./divided_log/'+index):
+            os.mkdir('./divided_log/'+index)
         f = open(path)
         lines=f.readlines()
         n_lines=len(lines)
@@ -42,8 +45,17 @@ def analysis_dinalog():
                 points_=elements[14 +( i * 4 ) :14+ ( i + 1 )*4]
                 leafs.append(points_)
             leafs_matrix.append(leafs)
-            np.save('./divided_log/'+index+'/leaf',leafs_matrix)
-            np.save('./divided_log/' + index + '/head', head_info)
+        f=open('./divided_log/'+index+'/leaf_txt','wb')
+        pickle.dump(list(leafs_matrix) ,f )
+        f.close()
+        f = open('./divided_log/' + index + '/head_txt','wb')
+        pickle.dump(list(head_info),f)
+        f.close()
+
+        np.save('./divided_log/'+index+'/leaf',leafs_matrix)
+        np.save('./divided_log/' + index + '/head', head_info)
+        sio.savemat('./divided_log/'+index+'/leaf', {'leaf': leafs_matrix})
+        sio.savemat('./divided_log/' + index + '/head', {'head': head_info})
 
         print np.shape(leafs_matrix)
 
@@ -57,6 +69,8 @@ def analysis_dinalog():
 
 if __name__ == '__main__':
     #list2dic()
-    #analysis_dinalog()
-    ap_=np.load('./divided_log/A20170614151153_RT02526/leaf.npy')
-    print np.shape(ap_)
+    analysis_dinalog()
+    #ap_=np.load('./divided_log/A20170614151153_RT02526/leaf.npy')
+    f=open('./divided_log/A20170614151153_RT02526/head_txt')
+    a=pickle.load(f)
+    print np.shape(a)
