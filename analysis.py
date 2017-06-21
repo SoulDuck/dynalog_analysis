@@ -17,35 +17,46 @@ def save_log(logs):
         np.save(folder_path+key,logs[key])
 def analysis_dinalog():
     log_paths=glob.glob('./log/*.dlg')
+    print log_paths[0]
     for path in log_paths:
-        print path
         index=path.split('/')[-1].split('.')[0]
-        print index
+        os.mkdir('./divided_log/'+index)
         f = open(path)
         lines=f.readlines()
         n_lines=len(lines)
-        ele=lines[6].split(',')
-        head_points=[];ep_=[];ap_=[];pfp_=[];nfp_=[]
         start_line=6
         end_line= n_lines
+        head_info=[];leafs_matrix=[]
+        n_leafs=60
         for l in range(start_line , end_line):
-            head_points.append(ele[0:14])
-            for i in range(4):
-                point_=ele[14 + 60 * i:14 + 60 * (i + 1)]
-                if i % 4 == 0:
-                    ep_.append(point_)
-                elif i % 4 == 1:
-                    ap_.append(point_)
-                elif i % 4 == 2:
-                    pfp_.append(point_)
-                else:
-                    nfp_.append(point_)
-        head_points, ep_, ap_, pfp_, nfp_=map(np.asarray , [head_points , ep_ , ap_, pfp_  , nfp_])
-        dic_log=list2dic(index,head_points, ep_, ap_, pfp_, nfp_)
-        save_log(dic_log)
+            leafs = []
+            elements=lines[l].split(',')
+            head_info.append(elements[0:14])
+            try:
+                if len(elements) != 254:
+                    raise ValueError
+            except ValueError:
+                print 'we skip this line',l, ' to save because',len(elements)
+                continue
+            for i in range(n_leafs):
+                points_=elements[14 +( i * 4 ) :14+ ( i + 1 )*4]
+                leafs.append(points_)
+            leafs_matrix.append(leafs)
+            np.save('./divided_log/'+index+'/leaf',leafs_matrix)
+            np.save('./divided_log/' + index + '/head', head_info)
+
+        print np.shape(leafs_matrix)
+
+
+
+
+        #head_points, ep_, ap_, pfp_, nfp_=map(np.asarray , [head_points , ep_ , ap_, pfp_  , nfp_])
+        #dic_log=list2dic(index,head_points, ep_, ap_, pfp_, nfp_)
+        #save_log(dic_log)
         #return index , head_points , ep_ , ap_, pfp_  , nfp_
 
 if __name__ == '__main__':
     #list2dic()
-    analysis_dinalog()
-    #index, head_points, ep_, ap_, pfp_, nfp_=
+    #analysis_dinalog()
+    ap_=np.load('./divided_log/A20170614151153_RT02526/leaf.npy')
+    print np.shape(ap_)
