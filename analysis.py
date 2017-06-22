@@ -3,6 +3,34 @@ import os , sys ,glob
 import pickle
 import scipy.io as sio
 
+def extract_points(folder_path):
+    log=np.load(folder_path+'leaf.npy')
+    log_head = np.load(folder_path + 'leaf.npy')
+
+    f_head=open(folder_path+'head.txt','w')
+    fs=[]
+    fs.append(open(folder_path+'/ap.txt' , 'w'))
+    fs.append(open(folder_path + '/ep.txt' , 'w'))
+    fs.append(open(folder_path + '/pfp.txt','w'))
+    fs.append(open(folder_path + '/nfp.txt','w'))
+
+    n_lines,n_leaf,n_points=np.shape(log)
+    for p_ind,f in enumerate(fs):
+        #print 'a' ,np.shape(log[:, :, p_ind])
+        lines=log[:, :, p_ind] #lines shape = (1490 , 60)
+        for line in lines: #line shape (60)
+            for ele in line:
+                f.write(ele+',')
+            f.write('\n')
+        f.close()
+    for head in log_head:
+        for ele in head:
+            f_head.write(ele)
+
+
+
+
+
 def save_file(filepath ,leafs_matrix , head_info ):
     ##pickle
     f = open(os.path.join(filepath,'leaf.pkl'), 'wb')
@@ -49,6 +77,7 @@ def analysis_dinalog():
         end_line= n_lines
         head_info=[];leafs_matrix=[]
         n_leafs=60
+        ap_ =[];ep_ =[];pfp_ =[];nfp_ =[];
         for l in range(start_line , end_line):
             leafs = []
             elements=lines[l].split(',')
@@ -57,15 +86,15 @@ def analysis_dinalog():
                 if len(elements) != 254:
                     raise ValueError
             except ValueError:
-                print 'we skip this line',l, ' to save because',len(elements)
+
+                print 'we skip this line',l, ' to save because',len(elements) , 'file_name',index
                 continue
             for i in range(n_leafs):
                 points_=elements[14 +( i * 4 ) :14+ ( i + 1 )*4]
                 leafs.append(points_)
             leafs_matrix.append(leafs)
         save_file(os.path.join('./divided_log/'+index ),leafs_matrix , head_info)
-
-        print np.shape(leafs_matrix)
+        extract_points('./divided_log/'+index+'/')
 
 
 
@@ -79,6 +108,6 @@ if __name__ == '__main__':
     #list2dic()
     analysis_dinalog()
     #ap_=np.load('./divided_log/A20170614151153_RT02526/leaf.npy')
-    f=open('./divided_log/A20170614151153_RT02526/head.pkl')
-    a=pickle.load(f)
-    print np.shape(a)
+    #leaf=np.load('./divided_log/A20170614151153_RT02526/leaf.npy')
+    #a=leaf[:,:,0]
+    #extract_points('./divided_log/A20170614151153_RT02526/' )
