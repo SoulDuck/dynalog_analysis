@@ -3,9 +3,25 @@ import os , sys ,glob
 import pickle
 import scipy.io as sio
 
+
+def get_rtfile(folder='./log/'):
+    #dynalog_path = 'xxxx_rt0000'
+    paths=glob.glob(folder+'/*.dlg')
+    def extract_rtname(path):
+        rtname=path.split('_')[-1].split('.dlg')[0]
+        return rtname
+    names=map(extract_rtname,paths)
+    print len(names)
+    names=set(names)
+    print len(names)
+    f=open('./rt_names.txt','w')
+    for name in names:
+        f.write(name)
+        f.write('\n')
+    return names
 def extract_points(folder_path):
     log=np.load(folder_path+'leaf.npy')
-    log_head = np.load(folder_path + 'leaf.npy')
+    log_head = np.load(folder_path + 'head.npy')
 
     f_head=open(folder_path+'head.txt','w')
     fs=[]
@@ -25,11 +41,10 @@ def extract_points(folder_path):
         f.close()
     for head in log_head:
         for ele in head:
-            f_head.write(ele)
+            f_head.write(ele+'\t')
 
 
-
-
+        f_head.write('\n')
 
 def save_file(filepath ,leafs_matrix , head_info ):
     ##pickle
@@ -67,7 +82,8 @@ def analysis_dinalog():
     log_paths=glob.glob('./log/*.dlg')
     print log_paths[0]
     for path in log_paths:
-        index=path.split('/')[-1].split('.')[0]
+        print path
+        index=path.split('/')[-1].split('.')[0] #
         if not os.path.isdir('./divided_log/'+index):
             os.mkdir('./divided_log/'+index)
         f = open(path)
@@ -77,22 +93,21 @@ def analysis_dinalog():
         end_line= n_lines
         head_info=[];leafs_matrix=[]
         n_leafs=60
-        ap_ =[];ep_ =[];pfp_ =[];nfp_ =[];
+        ap_=[];ep_=[];pfp_=[];nfp_=[];
         for l in range(start_line , end_line):
             leafs = []
             elements=lines[l].split(',')
-            head_info.append(elements[0:14])
+            head_info.append(elements[0:14]) # all lines heads was included leafs_matrix
             try:
                 if len(elements) != 254:
                     raise ValueError
             except ValueError:
-
-                print 'we skip this line',l, ' to save because',len(elements) , 'file_name',index
+                print 'we skip this line',l+1, 'because the # line elements ',len(elements) ,'not 254', 'file_name',index
                 continue
             for i in range(n_leafs):
                 points_=elements[14 +( i * 4 ) :14+ ( i + 1 )*4]
                 leafs.append(points_)
-            leafs_matrix.append(leafs)
+            leafs_matrix.append(leafs) # all lines leafs was included leafs_matrix
         save_file(os.path.join('./divided_log/'+index ),leafs_matrix , head_info)
         extract_points('./divided_log/'+index+'/')
 
@@ -104,8 +119,10 @@ def analysis_dinalog():
         #save_log(dic_log)
         #return index , head_points , ep_ , ap_, pfp_  , nfp_
 
+
 if __name__ == '__main__':
     #list2dic()
+    #print get_rtfile()
     analysis_dinalog()
     #ap_=np.load('./divided_log/A20170614151153_RT02526/leaf.npy')
     #leaf=np.load('./divided_log/A20170614151153_RT02526/leaf.npy')
