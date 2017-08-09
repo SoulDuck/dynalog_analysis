@@ -4,34 +4,7 @@ import sys, os , glob
 import time
 import utils
 import random
-def merge_xy_data(folder_path='./divided_log/'):
-    start_time=time.time()
-    debug_flag=True
-    debug_flag_lv1=True
-    debug_flag_lv2=True
 
-
-    if __debug__ == debug_flag:
-        print '### debug | data.py | merge_xy_data'
-    merged_x_data=[]
-    merged_y_data=[]
-    path , subfolders , files = os.walk(folder_path).next()
-    for i,subfolder in enumerate(subfolders[:]):
-        utils.show_processing(i,len(subfolders))
-        target_path=os.path.join(folder_path , subfolder)
-        x_data=np.load(os.path.join(target_path , 'x_data.npy'))
-        y_data = np.load(os.path.join(target_path, 'y_data.npy'))
-
-        if i==0:
-            merged_x_data = x_data
-            merged_y_data = y_data
-        else:
-            merged_x_data=np.concatenate([merged_x_data ,x_data] ,axis=0)
-            merged_y_data=np.concatenate([merged_y_data ,y_data]  ,axis=0)
-    if __debug__ == debug_flag_lv1:
-        print 'merged x data shape ',np.shape(merged_x_data)
-        print 'merged y data shape ',np.shape(merged_y_data)
-        print 'merged time ' , time.time()-start_time
 
 def get_train_test_xy_data(x_data , y_data , test_ratio):
     start_time=time.time()
@@ -62,6 +35,52 @@ def get_train_test_xy_data(x_data , y_data , test_ratio):
         print 'shape test y',np.shape(test_y)
     return train_x, test_x , train_y , test_y
 
+
+
+def merge_xy_data(root_dir= './divided_log'):
+    _,f_names,files=os.walk(root_dir).next()
+
+    for i,f_name in enumerate(f_names[:2]):
+        x_data=np.load('divided_log/'+f_name+'/x_data.npy')
+        y_data=np.load('divided_log/'+f_name+'/y_data.npy')
+        train_x , test_x , train_y , test_y =get_train_test_xy_data(x_data, y_data , 0.1)
+        if i==0:
+            train_xs=train_x
+            test_xs =test_x
+            train_ys=train_y
+            test_ys =test_y
+        else:
+            train_xs=np.concatenate([train_xs , train_x] , axis=0)
+            test_xs=np.concatenate([test_xs , test_x] , axis=0)
+            train_ys=np.concatenate([train_ys, train_y], axis=0)
+            test_ys=np.concatenate([test_ys, test_y], axis=0)
+    assert len(train_xs)==len(train_ys)
+    assert len(test_ys)==len(test_xs)
+    return train_x, train_y, test_x, test_y
+"""
+    # 3rd leaf
+    train_x=train_xs[:,leaf_num]
+    test_x=test_xs[:,leaf_num]
+    train_y=train_ys[:,leaf_num].reshape([-1,1])
+    test_y=test_ys[:,leaf_num].reshape([-1,1])
+"""
+
+def get_specified_leaf(leaf_num , *datum):
+    debug_flag_lv0=True
+    if __debug__ == debug_flag_lv0:
+        print 'start : ###debug | data.py | get_specified_leaf'
+    for data in datum:
+        assert type(data).__module__ == np.__name__ #check input data ,is numpy data or not
+
+        ret_data=data[:, leaf_num]
+        if len(np.shape(data))==2:
+            ret_data=ret_data.reshape([-1,1])
+        return ret_data
+    if __debug__ == debug_flag_lv0:
+        print 'end : ###end debug | data.py | get_specified_leaf'
+
+
+#def next_batch(x,y,batch_size):
 
 if __name__ == '__main__':
     merge_xy_data()
