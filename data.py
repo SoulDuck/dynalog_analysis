@@ -17,6 +17,29 @@ import random
 2.target leaf
 3.right leaf
 """
+def normalize(*datum):
+    ret_list = []
+    for i,data in enumerate(datum):
+        assert type(data).__module__==np.__name__
+        if i==0:
+            min_=np.min(data)
+            max_=np.max(data)
+        else:
+            if np.min(data) < min_:
+                min_=np.min(data)
+            if np.max(data) > max_:
+                max_ = np.max(data)
+
+    for i, data in enumerate(datum):
+        data=(data-min_) / (max_ - min_)
+        ret_list.append(data)
+
+    print 'min value', min_
+    print 'max value', max_
+    print data[:1]
+
+    return ret_list
+
 
 
 
@@ -108,4 +131,4 @@ def get_specified_leaf(leaf_num , *datum):
 #def next_batch(x,y,batch_size):
 
 if __name__ == '__main__':
-    merge_xy_data()
+    merge_xy_data(limit=2)

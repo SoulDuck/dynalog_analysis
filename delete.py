@@ -2,6 +2,8 @@ import numpy as np
 a=np.zeros([1,1])
 b=np.zeros([1,1])
 c=np.zeros([1,1])
+min=np.min(a)
+print min
 #b=2
 #c=3
 print type(a).__module__
