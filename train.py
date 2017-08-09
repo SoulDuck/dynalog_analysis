@@ -25,30 +25,45 @@ if __debug__ == debug_flag_lv0:
 3.right leaf
 """
 
-x_data=np.load('divided_log/A20170614151153_RT02526/x_data.npy')
-y_data=np.load('divided_log/A20170614151153_RT02526/y_data.npy')
-train_x , test_x , train_y , test_y =data.get_train_test_xy_data(x_data, y_data , 0.1)
 
 
+_,f_names,files=os.walk('./divided_log').next()
+
+for i,f_name in enumerate(f_names[:2]):
+    x_data=np.load('divided_log/'+f_name+'/x_data.npy')
+    y_data=np.load('divided_log/'+f_name+'/y_data.npy')
+    train_x , test_x , train_y , test_y =data.get_train_test_xy_data(x_data, y_data , 0.1)
+    if i==0:
+        train_xs=train_x
+        test_xs =test_x
+        train_ys=train_y
+        test_ys =test_y
+    else:
+        train_xs=np.concatenate([train_xs , train_x] , axis=0)
+        test_xs=np.concatenate([test_xs , test_x] , axis=0)
+        train_ys=np.concatenate([train_ys, train_y], axis=0)
+        test_ys=np.concatenate([test_ys, test_y], axis=0)
+assert len(train_xs)==len(train_ys)
+assert len(test_ys)==len(test_xs)
 
 # 3rd leaf
 leaf_num=30
-train_x=train_x[:,leaf_num]
-test_x=test_x[:,leaf_num]
-train_y=train_y[:,leaf_num].reshape([-1,1])
-test_y=test_y[:,leaf_num].reshape([-1,1])
+train_x=train_xs[:,leaf_num]
+test_x=test_xs[:,leaf_num]
+train_y=train_ys[:,leaf_num].reshape([-1,1])
+test_y=test_ys[:,leaf_num].reshape([-1,1])
 
 
 
 
 if __debug__ == debug_flag_lv1:
-    print 'sample ',leaf_num, train_x[:10]
-    print 'train_x shape', np.shape(train_x)
-    print 'train_x shape', np.shape(test_x)
-    print 'train_y shape', np.shape(train_y)
-    print 'train_y shape', np.shape(test_y)
+    print 'sample ',leaf_num, train_xs[:10]
+    print 'train_xs shape', np.shape(train_xs)
+    print 'train_xs shape', np.shape(test_xs)
+    print 'train_ys shape', np.shape(train_ys)
+    print 'train_ys shape', np.shape(test_ys)
 
-
+"""
 n, seq_length , n_col=np.shape(train_x)
 data_dim=3
 hidden_dim=10
@@ -109,4 +124,4 @@ with tf.Session() as sess:
     plt.xlabel("Time Period")
     plt.ylabel("leaf control point")
     plt.show()
-
+"""
