@@ -1,7 +1,13 @@
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
 import os,sys,glob
+import matplotlib
+if "DISPLAY" not in os.environ:
+    # remove Travis CI Error
+    matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+
 import data
 import argparse
 debug_flag_lv0=False
