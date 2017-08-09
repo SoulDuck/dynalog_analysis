@@ -6,8 +6,6 @@ if "DISPLAY" not in os.environ:
     # remove Travis CI Error
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
-
 import data
 import argparse
 debug_flag_lv0=False
@@ -35,7 +33,7 @@ data_dim=3
 hidden_dim=10
 output_dim=1
 learning_rate=0.1
-iterations=5
+iterations=500000
 
 
 
