@@ -20,8 +20,8 @@ leaf_num=30
 
 root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
-train_xs , train_ys=data.merge_all_data(dir_paths[:10])
-test_xs , test_ys=data.merge_all_data(dir_paths[10:11])
+train_xs , train_ys=data.merge_all_data(dir_paths[:20])
+test_xs , test_ys=data.merge_all_data(dir_paths[10:12])
 
 train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys ))
 train_xs, train_ys, test_xs, test_ys=data.normalize(train_xs, train_ys, test_xs, test_ys)
