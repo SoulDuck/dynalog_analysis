@@ -107,6 +107,6 @@ with tf.Session() as sess:
     plt.plot(test_y)
     plt.plot(test_predict)
     plt.xlabel("Time Period")
-    plt.ylabel("Stock Price")
+    plt.ylabel("leaf control point")
     plt.show()
 
