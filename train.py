@@ -12,14 +12,14 @@ if __debug__ == debug_flag_lv0:
     print '###debug | train.py | '
 
 leaf_num=30
-train_xs,train_ys,test_xs,test_ys=data.merge_xy_data()
-train_xs , train_ys , test_xs , test_ys =data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys )
+train_xs,train_ys,test_xs,test_ys=data.merge_xy_data(limit=2)
+train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys ))
 
 if __debug__ == debug_flag_lv1:
-    print 'train_xs shape', np.shape(train_xs)
-    print 'train_xs shape', np.shape(test_xs)
-    print 'train_ys shape', np.shape(train_ys)
-    print 'train_ys shape', np.shape(test_ys)
+    print 'shape train xs', np.shape(train_xs)
+    print 'shape test xs', np.shape(test_xs)
+    print 'shape train ys', np.shape(train_ys)
+    print 'shape test ys', np.shape(test_ys)
 
 
 n, seq_length , n_col=np.shape(train_xs)
@@ -64,20 +64,20 @@ with tf.Session() as sess:
     # Training step
     for i in range(iterations):
         _, step_loss = sess.run([train, loss], feed_dict={
-            x_: train_x, y_: train_y})
+            x_: train_xs, y_: train_ys})
         print("[step: {}] loss: {}".format(i, step_loss))
 
     # Test step
 
-    test_predict, outputs_ = sess.run([pred, outputs], feed_dict={x_: test_x})
-    rmse_val = sess.run(rmse, feed_dict={targets: test_y, predictions: test_predict})
+    test_predict, outputs_ = sess.run([pred, outputs], feed_dict={x_: test_xs})
+    rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
     print outputs_, 'outputs shape', np.shape(outputs_)
     print("RMSE: {}".format(rmse_val))
     print test_predict
 
     # plot predictions
 
-    plt.plot(test_y)
+    plt.plot(test_ys)
     plt.plot(test_predict)
     plt.xlabel("Time Period")
     plt.ylabel("leaf control point")

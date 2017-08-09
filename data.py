@@ -51,13 +51,16 @@ def get_train_test_xy_data(x_data , y_data , test_ratio):
 
 
 
-def merge_xy_data(root_dir= './divided_log'):
+def merge_xy_data(root_dir= './divided_log' , limit=None):
+    debug_flag_lv0 = True
+    if __debug__ == debug_flag_lv0:
+        print 'start : ###debug | data.py | get_specified_leaf'
+        print 'limit',limit
     _,f_names,files=os.walk(root_dir).next()
-
-    for i,f_name in enumerate(f_names[:2]):
+    for i,f_name in enumerate(f_names[:limit]):
         x_data=np.load('divided_log/'+f_name+'/x_data.npy')
         y_data=np.load('divided_log/'+f_name+'/y_data.npy')
-        train_x , test_x , train_y , test_y =get_train_test_xy_data(x_data, y_data , 0.1)
+        train_x , test_x , train_y , test_y =get_train_test_xy_data( x_data, y_data , 0.1)
         if i==0:
             train_xs=train_x
             test_xs =test_x
@@ -70,7 +73,13 @@ def merge_xy_data(root_dir= './divided_log'):
             test_ys=np.concatenate([test_ys, test_y], axis=0)
     assert len(train_xs)==len(train_ys)
     assert len(test_ys)==len(test_xs)
-    return train_x, train_y, test_x, test_y
+    if __debug__ == debug_flag_lv0:
+        print 'merged train_xs shape:',np.shape(train_xs)
+        print 'merged test_xs shape:' , np.shape(test_xs)
+        print 'merged train_ys shape:', np.shape(train_ys)
+        print 'merged test_ys shape:' , np.shape(test_ys)
+        print 'end : ###debug | data.py | get_specified_leaf'
+    return train_xs, train_ys, test_xs, test_ys
 """
     # 3rd leaf
     train_x=train_xs[:,leaf_num]
@@ -80,6 +89,7 @@ def merge_xy_data(root_dir= './divided_log'):
 """
 
 def get_specified_leaf(leaf_num , *datum):
+    ret_list=[]
     debug_flag_lv0=True
     if __debug__ == debug_flag_lv0:
         print 'start : ###debug | data.py | get_specified_leaf'
@@ -89,10 +99,11 @@ def get_specified_leaf(leaf_num , *datum):
         ret_data=data[:, leaf_num]
         if len(np.shape(data))==2:
             ret_data=ret_data.reshape([-1,1])
-        return ret_data
+        ret_list.append(ret_data)
+
     if __debug__ == debug_flag_lv0:
         print 'end : ###end debug | data.py | get_specified_leaf'
-
+    return ret_list
 
 #def next_batch(x,y,batch_size):
 

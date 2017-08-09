@@ -12,4 +12,7 @@ def abc(*args):
         print arg
 
     return args
-print type(abc(a,b,c))
+print abc(a,b,c)
+
+a=[1,1,1,1,1,1,1,1,1,5]
+print a[:None]
