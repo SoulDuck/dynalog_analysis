@@ -8,27 +8,12 @@ debug_flag_lv0=False
 debug_flag_lv1=True
 debug_flag_lv2=False
 
-
-
-
-"""
---- 3 --
- _  _  _ 
-| || || | |
-| || || | 7
-|_||_||_| |
- c1 c2 c3
-
-1.left leaf
-2.target leaf
-3.right leaf
-"""
-
 if __debug__ == debug_flag_lv0:
     print '###debug | train.py | '
 
+leaf_num=30
 train_xs,train_ys,test_xs,test_ys=data.merge_xy_data()
-data.merge_xy_data()
+train_xs , train_ys , test_xs , test_ys =data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys )
 
 if __debug__ == debug_flag_lv1:
     print 'train_xs shape', np.shape(train_xs)

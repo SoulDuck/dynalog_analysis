@@ -5,6 +5,20 @@ import time
 import utils
 import random
 
+"""
+--- 3 --
+ _  _  _ 
+| || || | |
+| || || | 7
+|_||_||_| |
+ c1 c2 c3
+
+1.left leaf
+2.target leaf
+3.right leaf
+"""
+
+
 
 def get_train_test_xy_data(x_data , y_data , test_ratio):
     start_time=time.time()
