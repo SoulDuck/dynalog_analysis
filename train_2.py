@@ -50,7 +50,7 @@ learning_rate=0.01
 iterations=50000
 
 
-"""
+
 x_ = tf.placeholder(tf.float32, [None, seq_length , data_dim])
 y_ = tf.placeholder(tf.float32, [None, 1])
 
@@ -96,7 +96,7 @@ with tf.Session() as sess:
         raise KeyboardInterrupt
     except KeyboardInterrupt as kbi:
         utils.plot_xy(test_predict=test_predict , test_ys=test_ys)
-"""
+
 
 
 
