@@ -35,7 +35,7 @@ data_dim=3
 hidden_dim=10
 output_dim=1
 learning_rate=0.1
-iterations=50000
+iterations=5
 
 
 
@@ -90,4 +90,5 @@ with tf.Session() as sess:
     plt.xlabel("Time Period")
     plt.ylabel("leaf control point")
     plt.show()
+    plt.savefig('./dynalog_result.png')
 
