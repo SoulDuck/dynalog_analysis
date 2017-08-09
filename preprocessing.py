@@ -1,15 +1,17 @@
 import numpy as np
 import os , sys , glob
-
 #ep-ap error
 
 
 
 def get_trainingData(folder_path , seq_length=7 , save_is=True):
-    debug_flag=True
+    debug_flag = True
+    debug_flag_lv1 = True
+    debug_flag_lv2 = False
     if __debug__ == debug_flag:
         print '### debug | preprocessing.py | get_trainingData ###'
         print 'hidden param state: seq_length=',seq_length,'save_is=',save_is
+        print 'folder path=',folder_path
 
     #type(ep).__moduel__ == __name__.np
 
@@ -30,11 +32,11 @@ def get_trainingData(folder_path , seq_length=7 , save_is=True):
             y_data[r,c]=y[c+1]
 
     np.save(os.path.join(folder_path ,'x_data.npy'),x_data)
-    np.save(os.path.join(folder_path, 'y_data.npy'), x_data)
+    np.save(os.path.join(folder_path, 'y_data.npy'), y_data)
     assert len(x_data) == len(y_data)
-    if __debug__ == debug_flag:
+    if __debug__ == debug_flag_lv1:
         print 'x_data , and y_data was saved'
-    if __debug__ == debug_flag:
+    if __debug__ == debug_flag_lv2:
         print 'x  data length :,',np.shape(x_data)
         print 'y  data length :,',np.shape(y_data)
         print 'leaf shape :',np.shape(leafs)
@@ -53,9 +55,13 @@ def get_trainingData(folder_path , seq_length=7 , save_is=True):
 if __name__ =='__main__':
     root_dir='./divided_log'
     path, subfolders , files=os.walk(root_dir).next()
+    print '# subfolders ' , len(subfolders)
     for subfolder in subfolders:
-        folder_path='./divided_log/B20170622102819_RT02486'
-        x_data , y_data = get_trainingData(folder_path)
+        target_folder_path=os.path.join('./divided_log' , subfolder)
+        x_data , y_data = get_trainingData(target_folder_path)
+
+
+
 
 
 
