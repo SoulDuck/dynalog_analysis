@@ -17,7 +17,7 @@ if __debug__ == debug_flag_lv0:
     print '###debug | train.py | '
 
 leaf_num=30
-train_xs,train_ys,test_xs,test_ys=data.merge_xy_data(limit=2)
+train_xs,train_ys,test_xs,test_ys=data.merge_xy_data(limit=10)
 train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys ))
 train_xs, train_ys, test_xs, test_ys=data.normalize(train_xs, train_ys, test_xs, test_ys)
 
@@ -30,10 +30,17 @@ if __debug__ == debug_flag_lv1:
 
 
 n, seq_length , n_col=np.shape(train_xs)
+
+"""
+parser=argparse.ArgumentParser()
+parser.add_argument('--iter')
+parser.add_argument('--learning_rate')
+"""
+
 data_dim=3
 hidden_dim=10
 output_dim=1
-learning_rate=0.1
+learning_rate=0.01
 iterations=50000
 
 
