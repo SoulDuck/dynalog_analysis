@@ -8,6 +8,7 @@ if "DISPLAY" not in os.environ:
 import matplotlib.pyplot as plt
 import data
 import argparse
+import utils
 debug_flag_lv0=False
 debug_flag_lv1=True
 debug_flag_lv2=False
@@ -33,7 +34,7 @@ data_dim=3
 hidden_dim=10
 output_dim=1
 learning_rate=0.1
-iterations=500000
+iterations=50000
 
 
 
@@ -68,25 +69,23 @@ with tf.Session() as sess:
     sess.run(init)
 
     # Training step
-    for i in range(iterations):
-        _, step_loss = sess.run([train, loss], feed_dict={
-            x_: train_xs, y_: train_ys})
-        print("[step: {}] loss: {}".format(i, step_loss))
+    try:
+        for i in range(iterations):
 
-    # Test step
+            _, step_loss = sess.run([train, loss], feed_dict={
+                x_: train_xs, y_: train_ys})
+            print("[step: {}] loss: {}".format(i, step_loss))
 
-    test_predict, outputs_ = sess.run([pred, outputs], feed_dict={x_: test_xs})
-    rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
-    print outputs_, 'outputs shape', np.shape(outputs_)
-    print("RMSE: {}".format(rmse_val))
-    print test_predict
+        # Test step
 
-    # plot predictions
+        test_predict, outputs_ = sess.run([pred, outputs], feed_dict={x_: test_xs})
+        rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
+        print outputs_, 'outputs shape', np.shape(outputs_)
+        print("RMSE: {}".format(rmse_val))
+        print test_predict
+        raise KeyboardInterrupt
+    except KeyboardInterrupt as kbi:
+        utils.plot_xy(test_predict=test_predict , test_ys=test_ys)
 
-    plt.plot(test_ys)
-    plt.plot(test_predict)
-    plt.xlabel("Time Period")
-    plt.ylabel("leaf control point")
-    plt.show()
-    plt.savefig('./dynalog_result.png')
+
 
