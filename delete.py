@@ -1,20 +1,6 @@
 import numpy as np
-a=np.zeros([1,1])
-b=np.zeros([1,1])
-c=np.zeros([1,1])
-min=np.min(a)
-print min
-#b=2
-#c=3
-print type(a).__module__
-print np.__name__
-def abc(*args):
-    print len(args)
-    for arg in args:
-        print arg
 
-    return args
-print abc(a,b,c)
 
-a=[1,1,1,1,1,1,1,1,1,5]
-print a[:None]
+a=np.load('0_true_normalizae.npy')
+print len(a)
+print a

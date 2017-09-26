@@ -55,11 +55,9 @@ y_ = tf.placeholder(tf.float32, [None, 1])
 cell = tf.contrib.rnn.BasicLSTMCell(
     num_units=hidden_dim, state_is_tuple=True, activation=tf.tanh)
 
-
 outputs, _states = tf.nn.dynamic_rnn(cell, x_, dtype=tf.float32)
 pred = tf.contrib.layers.fully_connected(
     outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
-
 # cost/loss
 loss = tf.reduce_sum(tf.square(pred - y_))  # sum of the squares
 # optimizer

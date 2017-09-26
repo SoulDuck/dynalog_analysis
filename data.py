@@ -17,6 +17,22 @@ import random
 2.target leaf
 3.right leaf
 """
+
+
+def get_min_max(*datum):
+    for i,data in enumerate(datum):
+        assert type(data).__module__==np.__name__
+        if i==0:
+            min_=np.min(data)
+            max_=np.max(data)
+        else:
+            if np.min(data) < min_:
+                min_=np.min(data)
+            if np.max(data) > max_:
+                max_ = np.max(data)
+    return min_ ,max_
+
+
 def normalize(*datum):
     debug_flag_lv0 = True
     if __debug__ == debug_flag_lv0:

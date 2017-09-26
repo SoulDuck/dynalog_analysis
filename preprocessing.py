@@ -31,7 +31,7 @@ def get_trainingData(folder_path , seq_length=7 , save_is=True):
             x_data[r, c,:,:]=x[:,c:c+3]
             y_data[r,c]=y[c+1]
 
-    np.save(os.path.join(folder_path ,'x_data.npy'),x_data)
+    np.save(os.path.join(folder_path ,'x_data.npy'), x_data)
     np.save(os.path.join(folder_path, 'y_data.npy'), y_data)
     assert len(x_data) == len(y_data)
     if __debug__ == debug_flag_lv1:

@@ -16,16 +16,19 @@ debug_flag_lv2=False
 if __debug__ == debug_flag_lv0:
     print '###debug | train.py | '
 
-leaf_num=30
 
+leaf_num=57
+n_train=15
 root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
-train_xs , train_ys=data.merge_all_data(dir_paths[:20])
-test_xs , test_ys=data.merge_all_data(dir_paths[10:12])
 
+train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
+test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
+print dir_paths[n_train:]
 train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys ))
+min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
+print 'min', min_ , 'max' ,max_
 train_xs, train_ys, test_xs, test_ys=data.normalize(train_xs, train_ys, test_xs, test_ys)
-
 
 if __debug__ == debug_flag_lv1:
     print 'shape train xs', np.shape(train_xs)
@@ -47,7 +50,8 @@ data_dim=3
 hidden_dim=10
 output_dim=1
 learning_rate=0.01
-iterations=50000
+iterations=10000
+check_point=100
 
 
 
@@ -62,7 +66,6 @@ cell = tf.contrib.rnn.BasicLSTMCell(
 outputs, _states = tf.nn.dynamic_rnn(cell, x_, dtype=tf.float32)
 pred = tf.contrib.layers.fully_connected(
     outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
-
 # cost/loss
 loss = tf.reduce_sum(tf.square(pred - y_))  # sum of the squares
 # optimizer
@@ -73,7 +76,6 @@ targets = tf.placeholder(tf.float32, [None, 1])
 predictions = tf.placeholder(tf.float32, [None, 1])
 rmse = tf.sqrt(tf.reduce_mean(tf.square(targets - predictions)))
 
-
 with tf.Session() as sess:
     init = tf.global_variables_initializer()
     sess.run(init)
@@ -82,20 +84,30 @@ with tf.Session() as sess:
     try:
         for i in range(iterations):
 
-            _, step_loss = sess.run([train, loss], feed_dict={
-                x_: train_xs, y_: train_ys})
-            print("[step: {}] loss: {}".format(i, step_loss))
+
+
+            if i%check_point ==0:
+                test_predict, outputs_, test_loss = sess.run([pred, outputs, loss], feed_dict={x_: test_xs , y_ : test_ys})
+                print("[step: {}] test loss: {}".format(i, test_loss))
+                utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./dynalog_result_'+str(i)+'.png')
+
+            _, train_loss = sess.run([train, loss], feed_dict={x_: train_xs, y_: train_ys})
+            print("[step: {}] train loss: {}".format(i, train_loss))
 
         # Test step
 
-        test_predict, outputs_ = sess.run([pred, outputs], feed_dict={x_: test_xs})
+        test_predict, outputs_  , test_loss = sess.run([pred, outputs,loss], feed_dict={x_: test_xs,y_ : test_ys})
         rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
         print outputs_, 'outputs shape', np.shape(outputs_)
         print("RMSE: {}".format(rmse_val))
         print test_predict
         raise KeyboardInterrupt
     except KeyboardInterrupt as kbi:
-        utils.plot_xy(test_predict=test_predict , test_ys=test_ys)
+
+        test_predict=test_predict*(max_ - min_)+min_
+        test_ys = test_ys * (max_ - min_) + min_
+        utils.plot_xy(test_predict=test_predict, test_ys=test_ys, savename='./dynalog_result_last' + '.png')
+        #np.save('./test_ep.npy',test_xs[])
 
 
 
