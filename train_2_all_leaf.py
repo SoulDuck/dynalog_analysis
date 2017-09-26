@@ -26,7 +26,7 @@ for f in range(leaf_num):
     train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
     test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
     print dir_paths[n_train:]
-    train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys ))
+    train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(f , train_xs , train_ys , test_xs , test_ys ))
     min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
     print 'min', min_ , 'max' ,max_
     train_xs, train_ys, test_xs, test_ys=data.normalize(train_xs, train_ys, test_xs, test_ys)
