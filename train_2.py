@@ -1,3 +1,4 @@
+#-*- coding:utf-8 -*-
 import tensorflow as tf
 import numpy as np
 import os,sys,glob
@@ -17,18 +18,19 @@ if __debug__ == debug_flag_lv0:
     print '###debug | train.py | '
 
 
-leaf_num=57
+leaf_num=30
 n_train=15
+
 root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
-
+print 'dir paths : ',dir_paths
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
 print dir_paths[n_train:]
 train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys ))
 min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
 print 'min', min_ , 'max' ,max_
-train_xs, train_ys, test_xs, test_ys=data.normalize(train_xs, train_ys, test_xs, test_ys)
+#train_xs, train_ys, test_xs, test_ys=data.normalize(train_xs, train_ys, test_xs, test_ys)
 
 if __debug__ == debug_flag_lv1:
     print 'shape train xs', np.shape(train_xs)
@@ -38,6 +40,9 @@ if __debug__ == debug_flag_lv1:
 
 n, seq_length , n_col=np.shape(train_xs)
 
+def lstm(hidden_dim):
+    return tf.contrib.rnn.BasicLSTMCell(
+        num_units=hidden_dim, state_is_tuple=True, activation=tf.tanh)
 
 
 """
@@ -50,8 +55,9 @@ data_dim=3
 hidden_dim=10
 output_dim=1
 learning_rate=0.01
-iterations=10000
+iterations=50000
 check_point=100
+n_cell=3
 
 
 
@@ -59,11 +65,10 @@ x_ = tf.placeholder(tf.float32, [None, seq_length , data_dim])
 y_ = tf.placeholder(tf.float32, [None, 1])
 
 # build a LSTM network
-cell = tf.contrib.rnn.BasicLSTMCell(
-    num_units=hidden_dim, state_is_tuple=True, activation=tf.tanh)
 
-
-outputs, _states = tf.nn.dynamic_rnn(cell, x_, dtype=tf.float32)
+cell = lstm(hidden_dim=hidden_dim)
+multi_cell=tf.contrib.rnn.MultiRNNCell([lstm(hidden_dim)  for _ in range(n_cell)])
+outputs, _states = tf.nn.dynamic_rnn(multi_cell, x_, dtype=tf.float32)
 pred = tf.contrib.layers.fully_connected(
     outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
 # cost/loss
@@ -76,26 +81,24 @@ targets = tf.placeholder(tf.float32, [None, 1])
 predictions = tf.placeholder(tf.float32, [None, 1])
 rmse = tf.sqrt(tf.reduce_mean(tf.square(targets - predictions)))
 
+if not os.path.isdir('./graph'):
+    os.mkdir('./graph')
 with tf.Session() as sess:
     init = tf.global_variables_initializer()
     sess.run(init)
-
     # Training step
     try:
         for i in range(iterations):
-
-
-
             if i%check_point ==0:
                 test_predict, outputs_, test_loss = sess.run([pred, outputs, loss], feed_dict={x_: test_xs , y_ : test_ys})
+                print("[step: {}] train loss: {}".format(i, train_loss))
                 print("[step: {}] test loss: {}".format(i, test_loss))
-                utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./dynalog_result_'+str(i)+'.png')
+
+                utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
 
             _, train_loss = sess.run([train, loss], feed_dict={x_: train_xs, y_: train_ys})
-            print("[step: {}] train loss: {}".format(i, train_loss))
 
         # Test step
-
         test_predict, outputs_  , test_loss = sess.run([pred, outputs,loss], feed_dict={x_: test_xs,y_ : test_ys})
         rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
         print outputs_, 'outputs shape', np.shape(outputs_)
@@ -103,12 +106,7 @@ with tf.Session() as sess:
         print test_predict
         raise KeyboardInterrupt
     except KeyboardInterrupt as kbi:
-
         test_predict=test_predict*(max_ - min_)+min_
         test_ys = test_ys * (max_ - min_) + min_
         utils.plot_xy(test_predict=test_predict, test_ys=test_ys, savename='./dynalog_result_last' + '.png')
         #np.save('./test_ep.npy',test_xs[])
-
-
-
-

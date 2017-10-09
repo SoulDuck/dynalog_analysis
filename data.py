@@ -1,3 +1,4 @@
+#-*- coding:utf-8 -*-
 import numpy as np
 import preprocessing
 import sys, os , glob
@@ -90,7 +91,6 @@ def merge_all_data(dir_paths):
         print 'merged x shape :',np.shape(xs)
         print 'merged y shape :',np.shape(ys)
         print 'end : ### debug | data.py | merge_all_data'
-
     return xs,ys
 
 def get_train_test_xy_data(x_data , y_data , test_ratio):
@@ -125,6 +125,8 @@ def get_train_test_xy_data(x_data , y_data , test_ratio):
 
 
 def merge_xy_data(root_dir= './divided_log' , limit=None):
+    # /divided_log 에 있는 x_data , y_data 을 다 긁어 모은다. 붙인다(concatenate)
+    # 그리고 반혼한다
     debug_flag_lv0 = True
     if __debug__ == debug_flag_lv0:
         print 'start : ###debug | data.py | get_specified_leaf'
@@ -169,7 +171,6 @@ def get_specified_leaf(leaf_num , *datum):
         print 'start : ###debug | data.py | get_specified_leaf'
     for data in datum:
         assert type(data).__module__ == np.__name__ #check input data ,is numpy data or not
-
         ret_data=data[:, leaf_num]
         if len(np.shape(data))==2:
             ret_data=ret_data.reshape([-1,1])

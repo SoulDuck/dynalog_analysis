@@ -17,7 +17,7 @@ if __debug__ == debug_flag_lv0:
     print '###debug | train.py | '
 
 leaf_num=57
-for f in range(leaf_num):
+for f in [1,10,20,30,40,50,57]:
     utils.make_dir(str(f))
     n_train=15
     root_path, names, files = os.walk('./divided_log').next()

@@ -27,16 +27,12 @@ if __debug__ == debug_flag_lv1:
     print 'shape test xs', np.shape(test_xs)
     print 'shape train ys', np.shape(train_ys)
     print 'shape test ys', np.shape(test_ys)
-
-
 n, seq_length , n_col=np.shape(train_xs)
-
 """
 parser=argparse.ArgumentParser()
 parser.add_argument('--iter')
 parser.add_argument('--learning_rate')
 """
-
 data_dim=3
 hidden_dim=10
 output_dim=1
@@ -72,17 +68,13 @@ rmse = tf.sqrt(tf.reduce_mean(tf.square(targets - predictions)))
 with tf.Session() as sess:
     init = tf.global_variables_initializer()
     sess.run(init)
-
     # Training step
     try:
         for i in range(iterations):
-
             _, step_loss = sess.run([train, loss], feed_dict={
                 x_: train_xs, y_: train_ys})
             print("[step: {}] loss: {}".format(i, step_loss))
-
         # Test step
-
         test_predict, outputs_ = sess.run([pred, outputs], feed_dict={x_: test_xs})
         rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
         print outputs_, 'outputs shape', np.shape(outputs_)
