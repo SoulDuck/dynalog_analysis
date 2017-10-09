@@ -19,11 +19,12 @@ if __debug__ == debug_flag_lv0:
 
 
 leaf_num=30
-n_train=15
+n_train=1
 
 root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
-print 'dir paths : ',dir_paths
+print 'dir paths : ',dir_paths[:]
+dir_paths=dir_paths[:2]
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
 print dir_paths[n_train:]
@@ -54,7 +55,9 @@ parser.add_argument('--learning_rate')
 data_dim=3
 hidden_dim=10
 output_dim=1
-learning_rate=0.01
+init_lr=0.01
+reduced_lr1=23000
+reduced_lr2=50000
 iterations=50000
 check_point=100
 n_cell=3
@@ -63,7 +66,7 @@ n_cell=3
 
 x_ = tf.placeholder(tf.float32, [None, seq_length , data_dim])
 y_ = tf.placeholder(tf.float32, [None, 1])
-
+lr_=tf.placeholder(tf.float32, name='learning_rate')
 # build a LSTM network
 
 cell = lstm(hidden_dim=hidden_dim)
@@ -73,8 +76,9 @@ pred = tf.contrib.layers.fully_connected(
     outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
 # cost/loss
 loss = tf.reduce_sum(tf.square(pred - y_))  # sum of the squares
+tf.summary.scalar('accuracy', loss)
 # optimizer
-optimizer = tf.train.AdamOptimizer(learning_rate)
+optimizer = tf.train.AdamOptimizer(lr_)
 train = optimizer.minimize(loss)
 
 targets = tf.placeholder(tf.float32, [None, 1])
@@ -84,20 +88,36 @@ rmse = tf.sqrt(tf.reduce_mean(tf.square(targets - predictions)))
 if not os.path.isdir('./graph'):
     os.mkdir('./graph')
 with tf.Session() as sess:
+    merged = tf.summary.merge_all()
+    train_writer = tf.summary.FileWriter(logdir='./logs/train')
+    test_writer = tf.summary.FileWriter(logdir='./logs/test')
     init = tf.global_variables_initializer()
     sess.run(init)
+
     # Training step
+    train_loss=0
     try:
         for i in range(iterations):
-            if i%check_point ==0:
-                test_predict, outputs_, test_loss = sess.run([pred, outputs, loss], feed_dict={x_: test_xs , y_ : test_ys})
-                print("[step: {}] train loss: {}".format(i, train_loss))
-                print("[step: {}] test loss: {}".format(i, test_loss))
 
+            if i<= reduced_lr1:
+                learning_rate=init_lr
+            elif i <= reduced_lr2:
+                learning_rate = reduced_lr1
+            else:
+                learning_rate = reduced_lr2
+
+
+            if i%check_point ==0:
+                test_predict, outputs_, test_loss = sess.run([pred, outputs, loss], feed_dict={x_: test_xs , y_ : test_ys , lr_:learning_rate})
+
+
+                print("[step: {}] test loss: {}".format(i, test_loss))
+                print("[step: {}] train loss: {}".format(i, train_loss))
+                test_writer.add_summary(test_loss , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
 
-            _, train_loss = sess.run([train, loss], feed_dict={x_: train_xs, y_: train_ys})
-
+            _, train_loss = sess.run([train, loss], feed_dict={x_: train_xs, y_: train_ys , lr_:learning_rate})
+            train_writer.add_summary(train_loss, i)
         # Test step
         test_predict, outputs_  , test_loss = sess.run([pred, outputs,loss], feed_dict={x_: test_xs,y_ : test_ys})
         rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
