@@ -19,12 +19,12 @@ if __debug__ == debug_flag_lv0:
 
 
 leaf_num=30
-n_train=1
+n_train=15
 
 root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
 print 'dir paths : ',dir_paths[:]
-dir_paths=dir_paths[:2]
+dir_paths=dir_paths[:]
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
 print dir_paths[n_train:]
