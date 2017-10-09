@@ -19,11 +19,12 @@ if __debug__ == debug_flag_lv0:
 
 
 leaf_num=30
-n_train=15
+n_train=-3
 
 root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
 print 'dir paths : ',dir_paths[:]
+print 'length',len(dir_paths)
 dir_paths=dir_paths[:]
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
@@ -38,7 +39,6 @@ if __debug__ == debug_flag_lv1:
     print 'shape test xs', np.shape(test_xs)
     print 'shape train ys', np.shape(train_ys)
     print 'shape test ys', np.shape(test_ys)
-
 n, seq_length , n_col=np.shape(train_xs)
 
 def lstm(hidden_dim):
@@ -55,10 +55,10 @@ parser.add_argument('--learning_rate')
 data_dim=3
 hidden_dim=10
 output_dim=1
-init_lr=0.01
+init_lr=0.1
 reduced_lr1=23000
 reduced_lr2=50000
-iterations=50000
+iterations=5000000
 check_point=100
 n_cell=3
 
@@ -103,9 +103,9 @@ with tf.Session() as sess:
             if i<= reduced_lr1:
                 learning_rate=init_lr
             elif i <= reduced_lr2:
-                learning_rate = reduced_lr1
+                learning_rate = learning_rate/10.
             else:
-                learning_rate = reduced_lr2
+                learning_rate = learning_rate/10.
 
 
             if i%check_point ==0:
