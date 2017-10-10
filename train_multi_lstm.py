@@ -118,7 +118,7 @@ with tf.Session() as sess:
                 print("[step: {}] train loss: {}".format(i, train_loss))
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
-                saver.save(sess=sess , save_path='./models' , global_step=i)
+                saver.save(sess=sess , save_path='./models/model' , global_step=i)
             _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys , lr_:learning_rate})
             train_writer.add_summary(merged_summaries, i)
         # Test step
