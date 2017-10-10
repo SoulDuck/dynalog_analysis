@@ -56,11 +56,12 @@ data_dim=3
 hidden_dim=10
 output_dim=1
 init_lr=0.1
-reduced_lr1=23000
-reduced_lr2=50000
-iterations=5000000
+reduced_lr1=100000
+reduced_lr2=150000
+reduced_lr3=300000
+iterations=1000000
 check_point=100
-n_cell=3
+n_cell=5
 
 
 
@@ -90,6 +91,7 @@ if not os.path.isdir('./graph'):
     os.mkdir('./graph')
 with tf.Session() as sess:
     merged = tf.summary.merge_all()
+    saver = tf.train.Saver()
     train_writer = tf.summary.FileWriter(logdir='./logs/train')
     test_writer = tf.summary.FileWriter(logdir='./logs/test')
     init = tf.global_variables_initializer()
@@ -103,9 +105,11 @@ with tf.Session() as sess:
             if i<= reduced_lr1:
                 learning_rate=init_lr
             elif i <= reduced_lr2:
-                learning_rate = learning_rate/10.
+                learning_rate = 0.01
+            elif i <= reduced_lr3:
+                learning_rate = 0.001
             else:
-                learning_rate = learning_rate/10.
+                learning_rate=0.0001
 
 
             if i%check_point ==0:
@@ -114,7 +118,7 @@ with tf.Session() as sess:
                 print("[step: {}] train loss: {}".format(i, train_loss))
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
-
+                saver.save(sess=sess , save_path='./models' , global_step=i)
             _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys , lr_:learning_rate})
             train_writer.add_summary(merged_summaries, i)
         # Test step
