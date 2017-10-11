@@ -85,10 +85,10 @@ lr_=tf.placeholder(tf.float32, name='learning_rate')
 cell = lstm(hidden_dim=hidden_dim)
 multi_cell=tf.contrib.rnn.MultiRNNCell([lstm(hidden_dim)  for _ in range(n_cell)])
 outputs, _states = tf.nn.dynamic_rnn(multi_cell, x_, dtype=tf.float32)
-print outputs
+print 'Cell shape : ',outputs
 pred = tf.contrib.layers.fully_connected(
     outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
-print outputs
+print 'FC layer output shape :',outputs
 # cost/loss
 loss = tf.reduce_sum(tf.square(pred - y_))  # sum of the squares
 tf.summary.scalar('accuracy', loss)
