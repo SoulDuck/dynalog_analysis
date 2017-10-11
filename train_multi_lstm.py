@@ -65,7 +65,7 @@ parser.add_argument('--learning_rate')
 """
 
 data_dim=3
-hidden_dim=128
+hidden_dim=30
 output_dim=1
 init_lr=0.1
 reduced_lr1=30000
@@ -88,7 +88,7 @@ outputs, _states = tf.nn.dynamic_rnn(multi_cell, x_, dtype=tf.float32)
 print 'Cell shape : ',outputs
 pred = tf.contrib.layers.fully_connected(
     outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
-print 'FC layer output shape :',outputs
+print 'FC layer output shape :',pred
 # cost/loss
 loss = tf.reduce_sum(tf.square(pred - y_))  # sum of the squares
 tf.summary.scalar('accuracy', loss)
