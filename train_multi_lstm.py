@@ -63,7 +63,7 @@ parser.add_argument('--learning_rate')
 """
 
 data_dim=3
-hidden_dim=1024
+hidden_dim=128
 output_dim=1
 init_lr=0.1
 reduced_lr1=30000
