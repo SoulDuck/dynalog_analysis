@@ -35,8 +35,8 @@ train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , tr
 
 min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
 print 'min', min_ , 'max' ,max_
-train_xs=train_xs/1000.
-test_xs=test_xs/1000.
+train_xs=train_xs/10000.
+test_xs=test_xs/10000.
 #
 print train_xs.max()
 print train_xs.min()
