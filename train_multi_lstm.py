@@ -27,7 +27,7 @@ print 'dir paths : ',dir_paths[:]
 print 'length',len(dir_paths)
 dir_paths=dir_paths[:]
 
-dir_paths=dir_paths[:4]
+dir_paths=dir_paths[:15]
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
 print dir_paths[n_train:]
@@ -86,6 +86,7 @@ outputs, _states = tf.nn.dynamic_rnn(multi_cell, x_, dtype=tf.float32)
 print outputs
 pred = tf.contrib.layers.fully_connected(
     outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
+print outputs
 # cost/loss
 loss = tf.reduce_sum(tf.square(pred - y_))  # sum of the squares
 tf.summary.scalar('accuracy', loss)
@@ -123,15 +124,15 @@ with tf.Session() as sess:
                 learning_rate=0.0001
 
             if i%check_point ==0:
-                batch_xs , batch_ys = data.next_batch(train_xs , train_ys , batch_size)
-                print np.shape(batch_xs) , np.shape(batch_ys)
+                #batch_xs , batch_ys = data.next_batch(train_xs , train_ys , batch_size)
+                #print np.shape(batch_xs) , np.shape(batch_ys)
                 test_predict, outputs_, test_loss , merged_summaries= sess.run([pred, outputs, loss ,merged ], feed_dict={x_: test_xs , y_ : test_ys , lr_:learning_rate})
                 print("[step: {}] test loss: {}".format(i, test_loss))
                 print("[step: {}] train loss: {}".format(i, train_loss))
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
                 saver.save(sess=sess , save_path='./models/model' , global_step=i)
-            _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: batch_xs, y_: batch_ys, lr_:learning_rate})
+            _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys, lr_:learning_rate})
 
             train_writer.add_summary(merged_summaries, i)
         # Test step
