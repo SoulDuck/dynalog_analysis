@@ -111,18 +111,16 @@ with tf.Session() as sess:
             else:
                 learning_rate=0.0001
 
-
             if i%check_point ==0:
                 batch_xs , batch_ys = data.next_batch(train_xs , train_ys , batch_size)
                 print np.shape(batch_xs) , np.shape(batch_ys)
-                exit()
                 test_predict, outputs_, test_loss , merged_summaries= sess.run([pred, outputs, loss ,merged ], feed_dict={x_: test_xs , y_ : test_ys , lr_:learning_rate})
                 print("[step: {}] test loss: {}".format(i, test_loss))
                 print("[step: {}] train loss: {}".format(i, train_loss))
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
                 saver.save(sess=sess , save_path='./models/model' , global_step=i)
-            _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys , lr_:learning_rate})
+            _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: batch_xs, y_: batch_ys, lr_:learning_rate})
 
             train_writer.add_summary(merged_summaries, i)
         # Test step
