@@ -35,7 +35,12 @@ min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
 print 'min', min_ , 'max' ,max_
 train_xs=train_xs/100.
 test_xs=test_xs/100.
-#train_xs, train_ys, test_xs, test_ys=data.normalize(train_xs, train_ys, test_xs, test_ys)
+#
+print train_xs.max()
+print train_xs.min()
+print test_xs.max()
+print test_xs.min()
+# train_xs, train_ys, test_xs, test_ys=data.normalize(train_xs, train_ys, test_xs, test_ys)
 
 if __debug__ == debug_flag_lv1:
     print 'shape train xs', np.shape(train_xs)
