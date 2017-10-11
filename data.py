@@ -5,7 +5,8 @@ import sys, os , glob
 import time
 import utils
 import random
-
+import analysis
+import matplotlib.pyplot as plt
 """
 --- 3 --
  _  _  _ 
@@ -18,6 +19,67 @@ import random
 2.target leaf
 3.right leaf
 """
+
+
+
+def get_error_indices(ep , ap , leaf_n):
+    """
+
+    :param ep:
+    :param ap:
+    :param leaf_n:
+    :return: return ep_larger_indices , ep_less_indices  , ep_same_indices
+    """
+
+    f_ep=open(ep , 'r')
+    f_ap=open(ap , 'r')
+    ep_lines = f_ep.readlines()
+    ap_lines = f_ap.readlines()
+
+    ep_larger=[] # ep_larger than ap
+    ep_less=[] # ep less than ap
+    ep_same=[]
+    assert len(ep_lines) == len(ap_lines) ,'{} | {}'.format(len(ep_lines),len(ap_lines))
+
+
+
+    ep_lines=map( lambda line : map(int ,line.split(',')[:-1]), ep_lines) # line.split(',')[:-1] for delete \n
+    ap_lines = map(lambda line: map(int, line.split(',')[:-1]), ap_lines)  # line.split(',')[:-1] for delete \n
+    ep_lines=np.asarray(ep_lines)
+    ap_lines = np.asarray(ap_lines)
+    ep_=ep_lines[:,leaf_n]
+    ap_ = ap_lines[:, leaf_n]
+    a=np.zeros(len(ep_))
+
+    #numpy indexing
+    ep_larger_indices=np.squeeze(np.where(ep_ > ap_))
+    ep_less_indices = np.squeeze(np.where(ep_ < ap_))
+    ep_same_indices = np.squeeze(np.where(ep_ == ap_))
+
+    assert len(ep_larger_indices)+len(ep_less_indices)+len(ep_same_indices) == len(ep_)\
+        ,'# ep larger indices : {} , # ep less indices : {} , # ep same indices {} , # total ep {}'.format(\
+        len(ep_larger_indices) , len(ep_less_indices) , len(ep_same_indices) , len(ep_))
+    print len(ep_larger_indices)
+    print len(ep_less_indices)
+    print len(ep_same_indices)
+
+    return ep_, ap_ , ep_larger_indices , ep_less_indices  , ep_same_indices
+
+
+
+def plot_ep_ap_graph(ep, ap ,leaf_n):
+    print 'plot_ep_ap_graph'
+    ep_ , ap_ ,ep_larger , ep_less , ep_same = get_error_indices(ep ,ap ,leaf_n)
+
+    plt.figure(figsize=(50, 10))
+    plt.scatter(x = ep_larger , y=ep_[ep_larger] , color='red' , label='ep larger than ap',)
+
+    plt.scatter(x = ep_less , y=ep_[ep_less] ,color='blue' ,label='ep less than ap')
+    plt.scatter(x = ep_same , y=ep_[ep_same],color='green' ,label = 'ep same as ap ')
+
+
+    plt.show()
+    plt.savefig('./tmp.png')
 
 
 def get_min_max(*datum):
@@ -187,4 +249,32 @@ if __name__ == '__main__':
     #merge_xy_data(limit=2)
     root_path , names , files=os.walk('./divided_log').next()
     dir_paths=map(lambda name : os.path.join(root_path , name) , names )
-    xs,ys=merge_all_data(dir_paths[:2])
+    #xs,ys=merge_all_data(dir_paths[:2])
+    dir_paths=dir_paths[:1]
+    ap_paths = os.path.join(dir_paths[0], 'ap.txt')
+    ep_paths = os.path.join(dir_paths[0], 'ep.txt')
+    ep_, ap_, ep_larger_indices, ep_less_indices, ep_same_indices=get_error_indices(ep=ep_paths , ap=ap_paths , leaf_n=30)
+
+    plot_ep_ap_graph(ep=ep_paths , ap=ap_paths , leaf_n=30)
+    plt.plot(range(len(ap_)) , ap_)
+    plt.savefig('./tmp2.png')
+
+
+    plt.close()
+    plt.figure(figsize=(10, 50))
+    plt.scatter(x=ep_larger_indices ,y= ep_[ep_larger_indices]  ,s=2)
+    plt.scatter(x=ep_larger_indices ,y= ap_[ep_larger_indices] ,s=2)
+    plt.savefig('tmp3.png')
+
+    ep_large_diff=ep_[ep_larger_indices] - ap_[ep_larger_indices]
+    print ep_large_diff
+    print len(ep_large_diff)
+    print ep_large_diff.max()
+
+    ep_less_diff = ep_[ep_less_indices] - ap_[ep_less_indices]
+    print ep_less_diff
+    print len(ep_less_diff)
+    print ep_less_diff.min()
+
+
+

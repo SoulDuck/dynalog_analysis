@@ -2,7 +2,8 @@ import numpy as np
 import os , sys ,glob
 import pickle
 import scipy.io as sio
-
+import matplotlib.pyplot as plt
+import data
 
 def get_rtfile(folder='./log/'):
     #dynalog_path = 'xxxx_rt0000'
@@ -118,6 +119,22 @@ def analysis_dinalog():
         #dic_log=list2dic(index,head_points, ep_, ap_, pfp_, nfp_)
         #save_log(dic_log)
         #return index , head_points , ep_ , ap_, pfp_  , nfp_
+
+
+
+
+
+
+
+    """
+    :param ep: txt file  
+    :param ap: txt file 
+    :param ep_larger: numpy  
+    :param ep_same: numpy 
+    :param ep_less: numpt 
+    :return: 
+    """
+
 
 
 if __name__ == '__main__':
