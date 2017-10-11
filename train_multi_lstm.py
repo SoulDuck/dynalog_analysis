@@ -26,6 +26,8 @@ dir_paths = map(lambda name: os.path.join(root_path, name), names)
 print 'dir paths : ',dir_paths[:]
 print 'length',len(dir_paths)
 dir_paths=dir_paths[:]
+
+dir_paths=dir_paths[:4]
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
 print dir_paths[n_train:]
@@ -33,8 +35,8 @@ train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , tr
 
 min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
 print 'min', min_ , 'max' ,max_
-train_xs=train_xs/100.
-test_xs=test_xs/100.
+train_xs=train_xs/1000.
+test_xs=test_xs/1000.
 #
 print train_xs.max()
 print train_xs.min()
@@ -61,7 +63,7 @@ parser.add_argument('--learning_rate')
 """
 
 data_dim=3
-hidden_dim=10
+hidden_dim=1024
 output_dim=1
 init_lr=0.1
 reduced_lr1=30000
@@ -69,7 +71,7 @@ reduced_lr2=80000
 reduced_lr3=130000
 iterations=150000
 check_point=100
-n_cell=5
+n_cell=3
 
 
 
@@ -81,6 +83,7 @@ lr_=tf.placeholder(tf.float32, name='learning_rate')
 cell = lstm(hidden_dim=hidden_dim)
 multi_cell=tf.contrib.rnn.MultiRNNCell([lstm(hidden_dim)  for _ in range(n_cell)])
 outputs, _states = tf.nn.dynamic_rnn(multi_cell, x_, dtype=tf.float32)
+print outputs
 pred = tf.contrib.layers.fully_connected(
     outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
 # cost/loss
