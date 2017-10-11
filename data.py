@@ -73,11 +73,8 @@ def plot_ep_ap_graph(ep, ap ,leaf_n):
 
     plt.figure(figsize=(50, 10))
     plt.scatter(x = ep_larger , y=ep_[ep_larger] , color='red' , label='ep larger than ap',)
-
     plt.scatter(x = ep_less , y=ep_[ep_less] ,color='blue' ,label='ep less than ap')
     plt.scatter(x = ep_same , y=ep_[ep_same],color='green' ,label = 'ep same as ap ')
-
-
     plt.show()
     plt.savefig('./tmp.png')
 
