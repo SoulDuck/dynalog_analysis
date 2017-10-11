@@ -119,11 +119,11 @@ with tf.Session() as sess:
             if i<= reduced_lr1:
                 learning_rate=init_lr
             elif i <= reduced_lr2:
-                learning_rate = 0.01
-            elif i <= reduced_lr3:
                 learning_rate = 0.001
+            elif i <= reduced_lr3:
+                learning_rate = 0.0001
             else:
-                learning_rate=0.0001
+                learning_rate=0.000001
 
             if i%check_point ==0:
                 #batch_xs , batch_ys = data.next_batch(train_xs , train_ys , batch_size)
