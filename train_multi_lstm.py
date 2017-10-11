@@ -38,7 +38,7 @@ print 'min', min_ , 'max' ,max_
 train_xs=train_xs/10000.
 test_xs=test_xs/10000.
 train_ys=train_ys/10000.
-
+test_ys=test_ys/10000.
 #
 print train_xs.max()
 print train_xs.min()
