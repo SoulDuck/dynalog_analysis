@@ -20,7 +20,7 @@ if __debug__ == debug_flag_lv0:
 
 leaf_num=30
 n_train=-3
-
+batch_size=60
 root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
 print 'dir paths : ',dir_paths[:]
@@ -56,10 +56,10 @@ data_dim=3
 hidden_dim=10
 output_dim=1
 init_lr=0.1
-reduced_lr1=100000
-reduced_lr2=150000
-reduced_lr3=300000
-iterations=1000000
+reduced_lr1=30000
+reduced_lr2=80000
+reduced_lr3=130000
+iterations=150000
 check_point=100
 n_cell=5
 
@@ -113,6 +113,9 @@ with tf.Session() as sess:
 
 
             if i%check_point ==0:
+                batch_xs , batch_ys = data.next_batch(train_xs , train_ys , batch_size)
+                print np.shape(batch_xs) , np.shape(batch_ys)
+                exit()
                 test_predict, outputs_, test_loss , merged_summaries= sess.run([pred, outputs, loss ,merged ], feed_dict={x_: test_xs , y_ : test_ys , lr_:learning_rate})
                 print("[step: {}] test loss: {}".format(i, test_loss))
                 print("[step: {}] train loss: {}".format(i, train_loss))
@@ -120,9 +123,11 @@ with tf.Session() as sess:
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
                 saver.save(sess=sess , save_path='./models/model' , global_step=i)
             _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys , lr_:learning_rate})
+
             train_writer.add_summary(merged_summaries, i)
         # Test step
         test_predict, outputs_  , test_loss = sess.run([pred, outputs,loss], feed_dict={x_: test_xs,y_ : test_ys})
+
         rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
         print outputs_, 'outputs shape', np.shape(outputs_)
         print("RMSE: {}".format(rmse_val))

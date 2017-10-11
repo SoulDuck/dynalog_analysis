@@ -22,6 +22,15 @@ import matplotlib.pyplot as plt
 
 
 
+def next_batch(x , y , batch_size):
+    indices=np.random.permutation(len(y))
+    batch_xs=x[indices[:batch_size]]
+    batch_ys = y[indices[:batch_size]]
+
+    return batch_xs , batch_ys
+
+
+
 def get_error_indices(ep , ap , leaf_n):
     """
 
