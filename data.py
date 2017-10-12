@@ -33,7 +33,6 @@ def next_batch(x , y , batch_size):
 
 def get_error_indices(ep , ap , leaf_n):
     """
-
     :param ep:
     :param ap:
     :param leaf_n:
@@ -80,12 +79,29 @@ def plot_ep_ap_graph(ep, ap ,leaf_n):
     print 'plot_ep_ap_graph'
     ep_ , ap_ ,ep_larger , ep_less , ep_same = get_error_indices(ep ,ap ,leaf_n)
 
+    ep_large_diff=ep_[ep_larger_indices] - ap_[ep_larger_indices]
+    print ep_large_diff
+    print len(ep_large_diff)
+    print ep_large_diff.max()
+
+    ep_less_diff = ep_[ep_less_indices] - ap_[ep_less_indices]
+    print ep_less_diff
+    print len(ep_less_diff)
+    print ep_less_diff.min()
+
+
+
     plt.figure(figsize=(50, 10))
     plt.scatter(x = ep_larger , y=ep_[ep_larger] , color='red' , label='ep larger than ap',)
     plt.scatter(x = ep_less , y=ep_[ep_less] ,color='blue' ,label='ep less than ap')
     plt.scatter(x = ep_same , y=ep_[ep_same],color='green' ,label = 'ep same as ap ')
     plt.show()
-    plt.savefig('./tmp.png')
+    plt.savefig('./ep_diff_from_ap.png')
+    plot_ep_ap_graph(ep=ep_paths , ap=ap_paths , leaf_n=30)
+    plt.plot(range(len(ap_)) , ap_)
+    plt.savefig('./ap_.png')
+
+
 
 
 def get_min_max(*datum):
@@ -261,26 +277,9 @@ if __name__ == '__main__':
     ep_paths = os.path.join(dir_paths[0], 'ep.txt')
     ep_, ap_, ep_larger_indices, ep_less_indices, ep_same_indices=get_error_indices(ep=ep_paths , ap=ap_paths , leaf_n=30)
 
-    plot_ep_ap_graph(ep=ep_paths , ap=ap_paths , leaf_n=30)
-    plt.plot(range(len(ap_)) , ap_)
-    plt.savefig('./tmp2.png')
-
-
     plt.close()
     plt.figure(figsize=(10, 50))
     plt.scatter(x=ep_larger_indices ,y= ep_[ep_larger_indices]  ,s=2)
     plt.scatter(x=ep_larger_indices ,y= ap_[ep_larger_indices] ,s=2)
     plt.savefig('tmp3.png')
-
-    ep_large_diff=ep_[ep_larger_indices] - ap_[ep_larger_indices]
-    print ep_large_diff
-    print len(ep_large_diff)
-    print ep_large_diff.max()
-
-    ep_less_diff = ep_[ep_less_indices] - ap_[ep_less_indices]
-    print ep_less_diff
-    print len(ep_less_diff)
-    print ep_less_diff.min()
-
-
 
