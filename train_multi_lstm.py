@@ -73,8 +73,8 @@ init_lr=0.1
 reduced_lr1=20000
 reduced_lr2=50000
 reduced_lr3=80000
-iterations=100
-check_point=100
+iterations=3000000
+check_point=500
 n_cell=3
 
 
@@ -125,8 +125,7 @@ with tf.Session() as sess:
             elif i <= reduced_lr3:
                 learning_rate = 0.0001
             else:
-                learning_rate=0.000001
-
+                learning_rate=0.00001
             if i%check_point ==0:
                 #batch_xs , batch_ys = data.next_batch(train_xs , train_ys , batch_size)
                 #print np.shape(batch_xs) , np.shape(batch_ys)
@@ -150,7 +149,6 @@ with tf.Session() as sess:
     except KeyboardInterrupt as kbi:
         pred=test_predict*normalize_factor
         test_ys=test_ys*normalize_factor
-
         analysis.analysis_result(true = test_ys , pred = pred , error_range_percent=5)
         test_ys = test_ys * (max_ - min_) + min_
         utils.plot_xy(test_predict=test_predict, test_ys=test_ys, savename='./dynalog_result_last' + '.png')
