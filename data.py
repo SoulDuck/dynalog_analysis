@@ -22,6 +22,8 @@ import matplotlib.pyplot as plt
 
 
 
+
+
 def next_batch(x , y , batch_size):
     indices=np.random.permutation(len(y))
     batch_xs=x[indices[:batch_size]]

@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 import os,sys,glob
 import matplotlib
+import analysis
 if "DISPLAY" not in os.environ:
     # remove Travis CI Error
     matplotlib.use('Agg')
@@ -25,9 +26,9 @@ root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
 print 'dir paths : ',dir_paths[:]
 print 'length',len(dir_paths)
-dir_paths=dir_paths[:]
+dir_paths=dir_paths[:5]
 
-dir_paths=dir_paths[:15]
+dir_paths=dir_paths[:]
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
 print dir_paths[n_train:]
@@ -35,10 +36,11 @@ train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , tr
 
 min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
 print 'min', min_ , 'max' ,max_
-train_xs=train_xs/10000.
-test_xs=test_xs/10000.
-train_ys=train_ys/10000.
-test_ys=test_ys/10000.
+normalize_factor=10000.
+train_xs=train_xs/normalize_factor
+test_xs=test_xs/normalize_factor
+train_ys=train_ys/normalize_factor
+test_ys=test_ys/normalize_factor
 #
 print train_xs.max()
 print train_xs.min()
@@ -71,7 +73,7 @@ init_lr=0.1
 reduced_lr1=30000
 reduced_lr2=80000
 reduced_lr3=130000
-iterations=150000
+iterations=100
 check_point=100
 n_cell=3
 
@@ -146,7 +148,11 @@ with tf.Session() as sess:
         print test_predict
         raise KeyboardInterrupt
     except KeyboardInterrupt as kbi:
-        test_predict=test_predict*(max_ - min_)+min_
+        pred=test_predict*normalize_factor
+        test_ys=test_ys*normalize_factor
+
+        analysis.analysis_result(true = test_ys , pred = pred , error_range_percent=5)
         test_ys = test_ys * (max_ - min_) + min_
         utils.plot_xy(test_predict=test_predict, test_ys=test_ys, savename='./dynalog_result_last' + '.png')
+
         #np.save('./test_ep.npy',test_xs[])

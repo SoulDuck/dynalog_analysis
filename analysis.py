@@ -112,19 +112,10 @@ def analysis_dinalog():
         save_file(os.path.join('./divided_log/'+index ),leafs_matrix , head_info)
         extract_points('./divided_log/'+index+'/')
 
-
-
-
         #head_points, ep_, ap_, pfp_, nfp_=map(np.asarray , [head_points , ep_ , ap_, pfp_  , nfp_])
         #dic_log=list2dic(index,head_points, ep_, ap_, pfp_, nfp_)
         #save_log(dic_log)
         #return index , head_points , ep_ , ap_, pfp_  , nfp_
-
-
-
-
-
-
 
     """
     :param ep: txt file  
@@ -134,6 +125,43 @@ def analysis_dinalog():
     :param ep_less: numpt 
     :return: 
     """
+
+def analysis_result(true , pred  , error_range_percent):
+    """
+
+    :param true: type must be numpy
+    :param pred: type must be numpy
+    :param error_range_percent: if error_range_percent = 5 --> 5%
+    :return:
+    """
+
+
+    up_boundary = error_range_percent+error_range_percent*(error_range_percent /100.)
+    buttom_boundary = error_range_percent + error_range_percent * (error_range_percent / 100.)
+
+    count =0
+    true=np.squeeze(true)
+    pred = np.squeeze(pred)
+    print np.shape(true)
+    print np.shape(pred)
+    plt.figure(figsize=(30, 30))
+    for i, v in enumerate(true):
+        if true[i] - true[i] * (error_range_percent / 100.) <= pred[i] and   pred[i] <= true[i]+true[i]*(error_range_percent /100.):
+            plt.scatter(i , true[i] , c ='r' , label = 'True ap')
+        else :
+            plt.scatter(i , true[i]  , c='b' , label = 'False ap')
+        count += 1
+    plt.savefig('./graph/result_analysis.png')
+    plt.show()
+
+
+
+
+
+
+
+
+
 
 
 
