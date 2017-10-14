@@ -130,6 +130,21 @@ def analysis_dinalog():
     :return: 
     """
 
+
+
+def get_acc(true , pred  , error_range_percent):
+    assert len(true) == len(pred)
+    true_count = 0;
+    for i, v in enumerate(true):
+        if true[i] - true[i] * (error_range_percent / 100.) <= pred[i] and pred[i] <= true[i] + true[i] * (
+            error_range_percent / 100.):
+            true_count += 1
+    acc=true_count/float(len(pred))
+    print 'accuracy :' ,acc, 'error_range : ' , error_range_percent
+    return acc
+
+
+
 def analysis_result(true , pred  , error_range_percent):
     """
 
@@ -144,7 +159,7 @@ def analysis_result(true , pred  , error_range_percent):
     up_boundary = error_range_percent+error_range_percent*(error_range_percent /100.)
     buttom_boundary = error_range_percent + error_range_percent * (error_range_percent / 100.)
 
-    count =0
+
     true=np.squeeze(true)
     pred = np.squeeze(pred)
     print np.shape(true)
@@ -153,13 +168,15 @@ def analysis_result(true , pred  , error_range_percent):
     red_patch = mpatches.Patch(color='red', label='True')
     blue_patch = mpatches.Patch(color='blue', label='False')
     plt.legend(handles=[red_patch , blue_patch])
-
+    ture_count=0;
     for i, v in enumerate(true):
         if true[i] - true[i] * (error_range_percent / 100.) <= pred[i] and   pred[i] <= true[i]+true[i]*(error_range_percent /100.):
             plt.scatter(i , true[i] , c ='r' , label = 'True ap')
+            ture_count +=1
         else :
             plt.scatter(i , true[i]  , c='b' , label = 'False ap')
-        count += 1
+
+
     plt.savefig('./graph/result_analysis.png')
     plt.show()
 

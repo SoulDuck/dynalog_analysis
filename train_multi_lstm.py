@@ -14,7 +14,7 @@ import utils
 debug_flag_lv0=False
 debug_flag_lv1=True
 debug_flag_lv2=False
-
+debug_flag_test=True
 if __debug__ == debug_flag_lv0:
     print '###debug | train.py | '
 
@@ -26,9 +26,12 @@ root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
 print 'dir paths : ',dir_paths[:]
 print 'length',len(dir_paths)
-dir_paths=dir_paths[:]
 
-dir_paths=dir_paths[:]
+if debug_flag_test:
+    dir_paths=dir_paths[:5]
+else:
+    dir_paths = dir_paths[:]
+
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
 print dir_paths[n_train:]
@@ -69,11 +72,14 @@ parser.add_argument('--learning_rate')
 data_dim=3
 hidden_dim=30
 output_dim=1
-init_lr=0.1
+init_lr=0.01
 reduced_lr1=20000
 reduced_lr2=50000
 reduced_lr3=80000
-iterations=3000000
+if debug_flag_test:
+    iterations=100
+else:
+    iterations=3000000
 check_point=500
 n_cell=3
 
@@ -112,7 +118,6 @@ with tf.Session() as sess:
     test_writer = tf.summary.FileWriter(logdir='./logs/test')
     init = tf.global_variables_initializer()
     sess.run(init)
-
     # Training step
     train_loss=0
     try:
@@ -135,6 +140,7 @@ with tf.Session() as sess:
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
                 saver.save(sess=sess , save_path='./models/model' , global_step=i)
+                analysis.get_acc(true = test_ys*normalize_factor , pred = test_predict*normalize_factor , error_range_percent=5)
             _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys, lr_:learning_rate})
 
             train_writer.add_summary(merged_summaries, i)
