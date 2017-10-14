@@ -2,6 +2,10 @@ import numpy as np
 import os , sys ,glob
 import pickle
 import scipy.io as sio
+
+import matplotlib.patches as mpatches
+
+
 import matplotlib.pyplot as plt
 import data
 
@@ -136,6 +140,7 @@ def analysis_result(true , pred  , error_range_percent):
     """
 
 
+
     up_boundary = error_range_percent+error_range_percent*(error_range_percent /100.)
     buttom_boundary = error_range_percent + error_range_percent * (error_range_percent / 100.)
 
@@ -145,6 +150,10 @@ def analysis_result(true , pred  , error_range_percent):
     print np.shape(true)
     print np.shape(pred)
     plt.figure(figsize=(30, 30))
+    red_patch = mpatches.Patch(color='red', label='True')
+    blue_patch = mpatches.Patch(color='blue', label='False')
+    plt.legend(handles=[red_patch , blue_patch])
+
     for i, v in enumerate(true):
         if true[i] - true[i] * (error_range_percent / 100.) <= pred[i] and   pred[i] <= true[i]+true[i]*(error_range_percent /100.):
             plt.scatter(i , true[i] , c ='r' , label = 'True ap')
