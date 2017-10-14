@@ -26,7 +26,7 @@ root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
 print 'dir paths : ',dir_paths[:]
 print 'length',len(dir_paths)
-dir_paths=dir_paths[:5]
+dir_paths=dir_paths[:]
 
 dir_paths=dir_paths[:]
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
@@ -70,9 +70,9 @@ data_dim=3
 hidden_dim=30
 output_dim=1
 init_lr=0.1
-reduced_lr1=30000
-reduced_lr2=80000
-reduced_lr3=130000
+reduced_lr1=20000
+reduced_lr2=50000
+reduced_lr3=80000
 iterations=100
 check_point=100
 n_cell=3
