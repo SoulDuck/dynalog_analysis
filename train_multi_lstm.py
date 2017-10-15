@@ -85,8 +85,8 @@ n_cell=3
 
 
 
-x_ = tf.placeholder(tf.float32, [None, seq_length , data_dim])
-y_ = tf.placeholder(tf.float32, [None, 1])
+x_ = tf.placeholder(tf.float32, [None, seq_length , data_dim] , name='x_')
+y_ = tf.placeholder(tf.float32, [None, 1] , name ='y_')
 lr_=tf.placeholder(tf.float32, name='learning_rate')
 # build a LSTM network
 
@@ -95,7 +95,7 @@ multi_cell=tf.contrib.rnn.MultiRNNCell([lstm(hidden_dim)  for _ in range(n_cell)
 outputs, _states = tf.nn.dynamic_rnn(multi_cell, x_, dtype=tf.float32)
 print 'Cell shape : ',outputs
 pred = tf.contrib.layers.fully_connected(
-    outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
+    outputs[:, -1], output_dim, activation_fn=None , name='pred')  # We use the last cell's output
 print 'FC layer output shape :',pred
 # cost/loss
 loss = tf.reduce_sum(tf.square(pred - y_))  # sum of the squares
@@ -103,11 +103,7 @@ tf.summary.scalar('accuracy', loss)
 tf.summary.scalar('learning_rate', lr_)
 # optimizer
 optimizer = tf.train.AdamOptimizer(lr_)
-train = optimizer.minimize(loss)
-
-targets = tf.placeholder(tf.float32, [None, 1])
-predictions = tf.placeholder(tf.float32, [None, 1])
-rmse = tf.sqrt(tf.reduce_mean(tf.square(targets - predictions)))
+train = optimizer.minimize(loss , name='train_op')
 
 if not os.path.isdir('./graph'):
     os.mkdir('./graph')
@@ -157,11 +153,10 @@ with tf.Session() as sess:
             train_writer.add_summary(merged_summaries, i)
         # Test step
         test_predict, outputs_  , test_loss = sess.run([pred, outputs,loss], feed_dict={x_: test_xs,y_ : test_ys})
-
-        rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
+        loss_val = sess.run(loss, feed_dict={y_: test_ys, pred: test_predict})
         print outputs_, 'outputs shape', np.shape(outputs_)
-        print("RMSE: {}".format(rmse_val))
-        print test_predict
+        print("RMSE: {}".format(loss_val))
+        #print test_predict
         raise KeyboardInterrupt
     except KeyboardInterrupt as kbi:
         pred=test_predict*normalize_factor
