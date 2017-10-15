@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import data
 import argparse
 import utils
+import eval
 debug_flag_lv0=False
 debug_flag_lv1=True
 debug_flag_lv2=False
@@ -77,10 +78,10 @@ reduced_lr1=20000
 reduced_lr2=50000
 reduced_lr3=80000
 if debug_flag_test:
-    iterations=100
+    iterations=101
 else:
     iterations=150000
-check_point=500
+check_point=100
 n_cell=3
 
 
@@ -119,9 +120,11 @@ with tf.Session() as sess:
     train_loss=0
     best_acc=0;
     best_loss=0
+    tmp_loss=0
     try:
-        for i in range(iterations):
 
+        for i in range(iterations):
+            print i
             if i<= reduced_lr1:
                 learning_rate=init_lr
             elif i <= reduced_lr2:
@@ -139,16 +142,23 @@ with tf.Session() as sess:
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
                 acc=analysis.get_acc(true = test_ys*normalize_factor , pred = test_predict*normalize_factor , error_range_percent=5)
+                print("[step: {}] test acc: {}".format(i, acc))
                 summary=tf.Summary(value = [tf.Summary.Value(tag='accuracy %s'%'test' , simple_value =float(acc))])
                 train_writer.add_summary(summary=summary , global_step=i )
-                if best_acc >= acc:
-                    saver.save(sess=sess, save_path='./models/acc_{}_loss_{}'.format(best_acc , best_loss), global_step=i)
+                if best_acc < acc:
                     best_acc = acc
+                    tmp_loss = test_loss
+                    saver.save(sess=sess, save_path='./models/acc_{}_loss_{}'.format(str(best_acc)[:4] , str(tmp_loss)[:4]), global_step=i)
+
+
+                    print 'model saved'
+
                 elif best_acc == acc:
-                    if best_loss < loss:
-                        best_loss = loss
-                        saver.save(sess=sess, save_path='./models/acc_{}_loss_{}.ckpt'.format(best_acc, best_loss),
+                    if best_loss > test_loss:
+                        best_loss = test_loss
+                        saver.save(sess=sess, save_path='./models/acc_{}_loss_{}.ckpt'.format(str(best_acc)[:4], str(best_loss)[:4]),
                                    global_step=i)
+                        print 'model saved'
             _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys, lr_:learning_rate})
 
             train_writer.add_summary(merged_summaries, i)
@@ -160,10 +170,17 @@ with tf.Session() as sess:
         #print test_predict
         raise KeyboardInterrupt
     except KeyboardInterrupt as kbi:
+        print '#### result ###'
         pred=test_predict*normalize_factor
         test_ys=test_ys*normalize_factor
         analysis.analysis_result(true = test_ys , pred = pred , error_range_percent=5)
         test_ys = test_ys * (max_ - min_) + min_
         utils.plot_xy(test_predict=test_predict, test_ys=test_ys, savename='./dynalog_result_last' + '.png')
+        print '########'
+        print test_ys[:10]
+        print test_predict[:10]
+        sess.close()
+        print 'start evaluation'
+        eval.eval(x=test_xs  , y=test_ys , error_range_percent=5 , model_path='./models/acc_{}_loss_{}-100'.format(str(best_acc)[:4] , str(tmp_loss)[:4]))
 
         #np.save('./test_ep.npy',test_xs[])
