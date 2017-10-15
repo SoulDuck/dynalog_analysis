@@ -14,7 +14,7 @@ import utils
 debug_flag_lv0=False
 debug_flag_lv1=True
 debug_flag_lv2=False
-debug_flag_test=False
+debug_flag_test=True
 if __debug__ == debug_flag_lv0:
     print '###debug | train.py | '
 
@@ -95,7 +95,8 @@ multi_cell=tf.contrib.rnn.MultiRNNCell([lstm(hidden_dim)  for _ in range(n_cell)
 outputs, _states = tf.nn.dynamic_rnn(multi_cell, x_, dtype=tf.float32)
 print 'Cell shape : ',outputs
 pred = tf.contrib.layers.fully_connected(
-    outputs[:, -1], output_dim, activation_fn=None , name='pred')  # We use the last cell's output
+    outputs[:, -1], output_dim, activation_fn=None)  # We use the last cell's output
+pred=tf.identity(pred , name='pred')
 print 'FC layer output shape :',pred
 # cost/loss
 loss = tf.reduce_sum(tf.square(pred - y_) , name='loss')  # sum of the squares
@@ -138,15 +139,15 @@ with tf.Session() as sess:
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
                 acc=analysis.get_acc(true = test_ys*normalize_factor , pred = test_predict*normalize_factor , error_range_percent=5)
-                tf.Summary(value = tf.Summary.Value(tag='accuracy %s'%'test' , simple_value =float(acc)))
-                train_writer.add_summary(summary=acc , global_step=i )
+                summary=tf.Summary(value = [tf.Summary.Value(tag='accuracy %s'%'test' , simple_value =float(acc))])
+                train_writer.add_summary(summary=summary , global_step=i )
                 if best_acc >= acc:
                     saver.save(sess=sess, save_path='./models/acc_{}_loss_{}'.format(best_acc , best_loss), global_step=i)
                     best_acc = acc
                 elif best_acc == acc:
                     if best_loss < loss:
                         best_loss = loss
-                        saver.save(sess=sess, save_path='./models/acc_{}_loss_{}'.format(best_acc, best_loss),
+                        saver.save(sess=sess, save_path='./models/acc_{}_loss_{}.ckpt'.format(best_acc, best_loss),
                                    global_step=i)
             _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys, lr_:learning_rate})
 
