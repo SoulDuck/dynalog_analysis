@@ -98,7 +98,7 @@ pred = tf.contrib.layers.fully_connected(
     outputs[:, -1], output_dim, activation_fn=None , name='pred')  # We use the last cell's output
 print 'FC layer output shape :',pred
 # cost/loss
-loss = tf.reduce_sum(tf.square(pred - y_))  # sum of the squares
+loss = tf.reduce_sum(tf.square(pred - y_) , name='loss')  # sum of the squares
 tf.summary.scalar('accuracy', loss)
 tf.summary.scalar('learning_rate', lr_)
 # optimizer
