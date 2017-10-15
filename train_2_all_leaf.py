@@ -82,6 +82,9 @@ for f in [1,10,20,30,40,50,57]:
         f_test_loss=open('./'+str(f)+'/test_loss.txt', 'w')
 
 
+#        self.summary_writer = logswriter(logdir=self.logs_path)
+        
+
 
         init = tf.global_variables_initializer()
         sess.run(init)

@@ -142,6 +142,8 @@ with tf.Session() as sess:
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
                 acc=analysis.get_acc(true = test_ys*normalize_factor , pred = test_predict*normalize_factor , error_range_percent=5)
+                tf.Summary(value = tf.Summary.Value(tag='accuracy %s'%'test' , simple_value =float(acc)))
+                train_writer.add_summary(summary=acc , global_step=i )
                 if best_acc >= acc:
                     saver.save(sess=sess, save_path='./models/acc_{}_loss_{}'.format(best_acc , best_loss), global_step=i)
                     best_acc = acc
