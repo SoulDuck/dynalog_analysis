@@ -10,6 +10,7 @@ import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import data
 
+
 def get_rtfile(folder='./log/'):
     #dynalog_path = 'xxxx_rt0000'
     paths=glob.glob(folder+'/*.dlg')
@@ -133,6 +134,9 @@ def analysis_dinalog():
 
 
 
+
+
+
 def get_acc(true , pred  , error_range_percent):
     assert len(true) == len(pred)
     true_count = 0;
@@ -143,6 +147,24 @@ def get_acc(true , pred  , error_range_percent):
     acc=true_count/float(len(pred))
     print 'accuracy :' ,acc, 'error_range : ' , error_range_percent
     return acc
+
+
+def get_acc_with_ep(ep ,true , pred  , error_range_percent):
+    assert len(true) == len(pred)
+    true_count = 0;
+    for i, v in enumerate(true):
+        diff=abs(ep[i]-true[i])
+
+        up_range=true[i]+diff*(error_range_percent / 100.)
+        buttom_range=true[i]-diff*(error_range_percent / 100.)
+
+        if buttom_range<= pred[i] and pred[i] <= up_range:
+
+            true_count += 1
+    acc=true_count/float(len(pred))
+    print 'accuracy :' ,acc, 'error_range : ' , error_range_percent
+    return acc
+
 
 
 

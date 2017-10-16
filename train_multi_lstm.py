@@ -149,10 +149,7 @@ with tf.Session() as sess:
                     best_acc = acc
                     tmp_loss = test_loss
                     saver.save(sess=sess, save_path='./models/acc_{}_loss_{}'.format(str(best_acc)[:4] , str(tmp_loss)[:4]), global_step=i)
-
-
                     print 'model saved'
-
                 elif best_acc == acc:
                     if best_loss > test_loss:
                         best_loss = test_loss
@@ -160,7 +157,6 @@ with tf.Session() as sess:
                                    global_step=i)
                         print 'model saved'
             _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys, lr_:learning_rate})
-
             train_writer.add_summary(merged_summaries, i)
         # Test step
         test_predict, outputs_  , test_loss = sess.run([pred, outputs,loss], feed_dict={x_: test_xs,y_ : test_ys})
