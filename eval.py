@@ -24,7 +24,7 @@ def eval(x , y , error_range_percent , model_path , model_extension=None):
     pred_ , loss_=sess.run(fetches=fetches , feed_dict={x_:x , y_:y})
     print y[:10]
     print pred_[:10]
-    acc=analysis.get_acc(true=y , pred=pred_ , error_range_percent=5)
+    acc=analysis.get_acc_with_ep(ep=x ,true=y , pred=pred_ , error_range_percent=5)
     sess.close()
 
     return acc

@@ -168,7 +168,7 @@ def get_acc_with_ep(ep ,true , pred  , error_range_percent):
 
 
 
-def analysis_result(true , pred  , error_range_percent):
+def analysis_result(ep , true , pred  , error_range_percent):
     """
 
     :param true: type must be numpy
@@ -179,8 +179,6 @@ def analysis_result(true , pred  , error_range_percent):
 
 
 
-    up_boundary = error_range_percent+error_range_percent*(error_range_percent /100.)
-    buttom_boundary = error_range_percent + error_range_percent * (error_range_percent / 100.)
 
 
     true=np.squeeze(true)
@@ -194,7 +192,12 @@ def analysis_result(true , pred  , error_range_percent):
     true_count=0;
 
     for i, v in enumerate(true):
-        if true[i] - true[i] * (error_range_percent / 100.) <= pred[i] and   pred[i] <= true[i]+true[i]*(error_range_percent /100.):
+        diff = abs(ep[i]-v)
+        up_range = true[i] + diff* (error_range_percent / 100.)
+        down_range = true[i] - diff* (error_range_percent / 100.)
+
+
+        if up_range >= pred[i] and pred[i] >= down_range:
             plt.scatter(i , true[i] , c ='r' , label = 'True ap')
             true_count +=1
         else :
@@ -203,16 +206,6 @@ def analysis_result(true , pred  , error_range_percent):
     print 'accuracy :', acc, 'error_range : ', error_range_percent
     plt.savefig('./graph/result_analysis.png')
     plt.show()
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
