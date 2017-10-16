@@ -21,6 +21,35 @@ import matplotlib.pyplot as plt
 """
 
 
+def get_ep_all(dir_paths , leaf_n=30 , seq_length=7):
+    for i,path in enumerate(dir_paths):
+        ep=get_ep(path , leaf_n=leaf_n , seq_length=seq_length)
+        if i ==0:
+            tmp_arr=ep[:]
+        else:
+            tmp_arr=np.hstack((tmp_arr, ep[:] ))
+            print tmp_arr
+    return tmp_arr
+
+def get_ep(dir_path , leaf_n=30 , seq_length=7):
+    f=open(os.path.join(dir_path , 'ep.txt'))
+    lines=f.readlines()
+    for i, line in enumerate(lines):
+
+        #print line.split(',')[:-1]
+        if i ==0:
+            values=map(int , line.split(',')[:-1])
+        else:
+            values=np.vstack((values , map(int , line.split(',')[:-1])))
+    print "### value shape ###"
+    print np.shape(values)
+
+    if leaf_n ==None:
+        return values
+    else:
+        print np.shape(values[seq_length+1: , leaf_n]) #ep을 기준으로 ap의 상대적인 위치을 기록한다 그래서 +1 을 더한다
+        return values[seq_length+1: , leaf_n]
+
 
 
 
@@ -81,12 +110,12 @@ def plot_ep_ap_graph(ep, ap ,leaf_n):
     print 'plot_ep_ap_graph'
     ep_ , ap_ ,ep_larger , ep_less , ep_same = get_error_indices(ep ,ap ,leaf_n)
 
-    ep_large_diff=ep_[ep_larger_indices] - ap_[ep_larger_indices]
+    ep_large_diff=ep_[ep_larger] - ap_[ep_larger]
     print ep_large_diff
     print len(ep_large_diff)
     print ep_large_diff.max()
 
-    ep_less_diff = ep_[ep_less_indices] - ap_[ep_less_indices]
+    ep_less_diff = ep_[ep_less] - ap_[ep_less]
     print ep_less_diff
     print len(ep_less_diff)
     print ep_less_diff.min()
@@ -99,7 +128,7 @@ def plot_ep_ap_graph(ep, ap ,leaf_n):
     plt.scatter(x = ep_same , y=ep_[ep_same],color='green' ,label = 'ep same as ap ')
     plt.show()
     plt.savefig('./ep_diff_from_ap.png')
-    plot_ep_ap_graph(ep=ep_paths , ap=ap_paths , leaf_n=30)
+    plot_ep_ap_graph(ep=ep_ , ap=ap_ , leaf_n=30)
     plt.plot(range(len(ap_)) , ap_)
     plt.savefig('./ap_.png')
 
@@ -257,7 +286,7 @@ def get_specified_leaf(leaf_num , *datum):
         print 'start : ###debug | data.py | get_specified_leaf'
     for data in datum:
         assert type(data).__module__ == np.__name__ #check input data ,is numpy data or not
-        ret_data=data[:, leaf_num]
+        ret_data=data[:, leaf_num-1] # width 가 3임으로 leaf_num이 30 이라면 31번째 리프를 보고 싶은것일텐데 -1을 안하면 32번째 리프가 불려오게 된다
         if len(np.shape(data))==2:
             ret_data=ret_data.reshape([-1,1])
         ret_list.append(ret_data)
@@ -270,6 +299,7 @@ def get_specified_leaf(leaf_num , *datum):
 
 
 if __name__ == '__main__':
+    """
     #merge_xy_data(limit=2)
     root_path , names , files=os.walk('./divided_log').next()
     dir_paths=map(lambda name : os.path.join(root_path , name) , names )
@@ -284,4 +314,6 @@ if __name__ == '__main__':
     plt.scatter(x=ep_larger_indices ,y= ep_[ep_larger_indices]  ,s=2)
     plt.scatter(x=ep_larger_indices ,y= ap_[ep_larger_indices] ,s=2)
     plt.savefig('tmp3.png')
+    """
+    get_ep('./divided_log/A20170614151153_RT02526/ep.txt')
 

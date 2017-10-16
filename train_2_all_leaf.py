@@ -46,7 +46,6 @@ for f in [1,10,20,30,40,50,57]:
     parser.add_argument('--iter')
     parser.add_argument('--learning_rate')
     """
-
     data_dim=3
     hidden_dim=10
     output_dim=1
@@ -54,15 +53,11 @@ for f in [1,10,20,30,40,50,57]:
     iterations=10000
     check_point=100
 
-
-
     x_ = tf.placeholder(tf.float32, [None, seq_length , data_dim])
     y_ = tf.placeholder(tf.float32, [None, 1])
-
     # build a LSTM network
     cell = tf.contrib.rnn.BasicLSTMCell(
         num_units=hidden_dim, state_is_tuple=True, activation=tf.tanh)
-
 
     outputs, _states = tf.nn.dynamic_rnn(cell, x_, dtype=tf.float32)
     pred = tf.contrib.layers.fully_connected(
@@ -72,23 +67,15 @@ for f in [1,10,20,30,40,50,57]:
     # optimizer
     optimizer = tf.train.AdamOptimizer(learning_rate)
     train = optimizer.minimize(loss)
-
     targets = tf.placeholder(tf.float32, [None, 1])
     predictions = tf.placeholder(tf.float32, [None, 1])
     rmse = tf.sqrt(tf.reduce_mean(tf.square(targets - predictions)))
     with tf.Session() as sess:
-
         f_train_loss=open('./'+str(f)+'/train_loss.txt' , 'w')
         f_test_loss=open('./'+str(f)+'/test_loss.txt', 'w')
-
-
 #        self.summary_writer = logswriter(logdir=self.logs_path)
-
-
-
         init = tf.global_variables_initializer()
         sess.run(init)
-
         # Training step
         try:
             for i in range(iterations):
@@ -105,11 +92,8 @@ for f in [1,10,20,30,40,50,57]:
                 f_train_loss.write(msg)
                 f_train_loss.flush()
                 f_test_loss.flush()
-
                 print("[step: {}] train loss: {}".format(i, train_loss))
-
             # Test step
-
             test_predict, outputs_  , test_loss = sess.run([pred, outputs,loss], feed_dict={x_: test_xs,y_ : test_ys})
             rmse_val = sess.run(rmse, feed_dict={targets: test_ys, predictions: test_predict})
             print outputs_, 'outputs shape', np.shape(outputs_)

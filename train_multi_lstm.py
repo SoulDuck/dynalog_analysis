@@ -17,8 +17,7 @@ debug_flag_lv1=True
 debug_flag_lv2=False
 debug_flag_test=True
 if __debug__ == debug_flag_lv0:
-    print '###debug | train.py | '
-
+    print '###debug | train.py |'
 
 leaf_num=30
 n_train=-3
@@ -35,23 +34,39 @@ else:
 
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
+
+print '##### directory paths #####'
 print dir_paths[n_train:]
-train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys ))
+train_xs, train_ys, test_xs, test_ys= list(data.get_specified_leaf(leaf_num , train_xs , train_ys , test_xs , test_ys))
+ep=data.get_ep_all(dir_paths[n_train:] , leaf_n=leaf_num)
+
+""" ep 하고 ap 는 데이터를 만들때 7개의 row 을 힉습시키고 그 다음 위치를 예측하는 형태로 x_data , y_data 을 만들었다
+하지만 위 ep는 ap와 ep을 비교해 graph을 그리는 데 사용할 것이기 때문에 기존의 x_Data에서 불러온 ep데이터와 달리 
+ap와 같은 데이터 위치를 가지고있다 .
+ 
+default 셋팅으로 길이는 7 너비는 3 으로 설정하였기 때문에 이 ep 데이터는 8번째 행부터 시작하며 데이터 지정한 열의 데이터를 가지고 온다.
+데이터를 일일이 눈으로 보면서 검증했다
+"""
+
+assert len(ep) == len(test_ys) , len(test_ys)
+print 'ep',ep[:8]
+print 'test_ys',test_ys[:8]
+print 'test_xs',test_xs[:8]
 
 min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
 print 'min', min_ , 'max' ,max_
+
 normalize_factor=10000.
 train_xs=train_xs/normalize_factor
 test_xs=test_xs/normalize_factor
 train_ys=train_ys/normalize_factor
 test_ys=test_ys/normalize_factor
-#
+
 print train_xs.max()
 print train_xs.min()
 print test_xs.max()
 print test_xs.min()
 # train_xs, train_ys, test_xs, test_ys=data.normalize(train_xs, train_ys, test_xs, test_ys)
-
 if __debug__ == debug_flag_lv1:
     print 'shape train xs', np.shape(train_xs)
     print 'shape test xs', np.shape(test_xs)
@@ -118,7 +133,7 @@ with tf.Session() as sess:
     sess.run(init)
     # Training step
     train_loss=0
-    best_acc=0;
+    best_acc=0
     best_loss=0
     tmp_loss=0
     try:

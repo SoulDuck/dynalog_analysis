@@ -157,7 +157,10 @@ def get_acc_with_ep(ep ,true , pred  , error_range_percent):
 
         up_range=true[i]+diff*(error_range_percent / 100.)
         buttom_range=true[i]-diff*(error_range_percent / 100.)
-
+        print diff
+        print
+        print up_range
+        print buttom_range
         if buttom_range<= pred[i] and pred[i] <= up_range:
 
             true_count += 1
@@ -170,17 +173,11 @@ def get_acc_with_ep(ep ,true , pred  , error_range_percent):
 
 def analysis_result(ep , true , pred  , error_range_percent):
     """
-
     :param true: type must be numpy
     :param pred: type must be numpy
     :param error_range_percent: if error_range_percent = 5 --> 5%
     :return:
     """
-
-
-
-
-
     true=np.squeeze(true)
     pred = np.squeeze(pred)
     print np.shape(true)
