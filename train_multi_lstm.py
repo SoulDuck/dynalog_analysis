@@ -15,7 +15,7 @@ import eval
 debug_flag_lv0=False
 debug_flag_lv1=True
 debug_flag_lv2=False
-debug_flag_test=True
+debug_flag_test=False
 if __debug__ == debug_flag_lv0:
     print '###debug | train.py |'
 
@@ -51,11 +51,7 @@ default 셋팅으로 길이는 7 너비는 3 으로 설정하였기 때문에 �
 """
 
 assert len(ep) == len(test_ys) , len(test_ys)
-print 'ep',ep[:30]
-print 'test_ys',test_ys[:30]
-print 'test_xs',test_xs[:30]
 
-exit()
 min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
 print 'min', min_ , 'max' ,max_
 
@@ -64,6 +60,10 @@ train_xs=train_xs/normalize_factor
 test_xs=test_xs/normalize_factor
 train_ys=train_ys/normalize_factor
 test_ys=test_ys/normalize_factor
+
+min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
+print 'min', min_ , 'max' ,max_
+
 
 print train_xs.max()
 print train_xs.min()
