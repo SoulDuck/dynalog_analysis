@@ -11,6 +11,8 @@ import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import data
 
+debug_lv0=True
+debug_lv1=False
 
 def get_rtfile(folder='./log/'):
     #dynalog_path = 'xxxx_rt0000'
@@ -150,20 +152,30 @@ def get_acc(true , pred  , error_range_percent):
 
 
 def get_acc_with_ep(ep ,true , pred  , error_range_percent):
+    if debug_lv0:
+        print 'analysis.py | get_acc_with_ep '
     assert len(true) == len(pred)
     true_count = 0;
+    """type 1 of gettting accuracy """
     for i, v in enumerate(true):
         diff=ep[i]-true[i]
 
         up_range=true[i]+diff*(error_range_percent / 100.)
         buttom_range=true[i]-diff*(error_range_percent / 100.)
+    """type 2 of gettting accuracy """
+    for i, v in enumerate(true):
+        diff = ep[i] - true[i]
+
+        up_range = true[i] + error_range_percent
+        buttom_range = true[i] - error_range_percent
+
+    if debug_lv1:
         if diff is not 0:
             print 'diff ' ,diff
         #print up_range
         #print buttom_range
-        if buttom_range<= pred[i] and pred[i] <= up_range:
-
-            true_count += 1
+    if buttom_range<= pred[i] and pred[i] <= up_range:
+        true_count += 1
     acc=true_count/float(len(pred))
     print 'accuracy :' ,acc, 'error_range : ' , error_range_percent
     return acc

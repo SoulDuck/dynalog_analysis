@@ -168,7 +168,7 @@ def normalize(*datum):
 
 
 def get_data(folder_path):
-    debug_flag_lv0 = True
+    debug_flag_lv0 = False
     if __debug__ == debug_flag_lv0:
         print '### debug | data.py | get_data'
     x_data = np.load(os.path.join(folder_path ,'x_data.npy'))

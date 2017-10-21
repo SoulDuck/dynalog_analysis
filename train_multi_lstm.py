@@ -141,7 +141,7 @@ with tf.Session() as sess:
     tmp_loss=0
     try:
         for i in range(iterations):
-            print i
+            utils.show_processing(i,maxiter=iterations)
             if i<= reduced_lr1:
                 learning_rate=init_lr
             elif i <= reduced_lr2:
@@ -158,7 +158,7 @@ with tf.Session() as sess:
                 print("[step: {}] train loss: {}".format(i, train_loss))
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
-                acc=analysis.get_acc_with_ep(ep= ep , true = test_ys*normalize_factor , pred = test_predict*normalize_factor , error_range_percent=5)
+                acc=analysis.get_acc_with_ep(ep= ep , true = test_ys*normalize_factor , pred = test_predict*normalize_factor , error_range_percent=30)
                 print("[step: {}] test acc: {}".format(i, acc))
                 summary=tf.Summary(value = [tf.Summary.Value(tag='accuracy %s'%'test' , simple_value =float(acc))])
                 train_writer.add_summary(summary=summary , global_step=i )
