@@ -68,4 +68,4 @@ if __name__ =='__main__':
     """
     subfolder='A20170614151153_RT02526 3'
     target_folder_path=os.path.join('./divided_log' , subfolder)
-    x_data , y_data = get_trainingData(target_folder_path)
+    x_data , y_data ,y1_data = get_trainingData(target_folder_path)
