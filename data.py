@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 1.left leaf
 2.target leaf
 3.right leaf
+
 """
 
 
@@ -57,7 +58,6 @@ def next_batch(x , y , batch_size):
     indices=np.random.permutation(len(y))
     batch_xs=x[indices[:batch_size]]
     batch_ys = y[indices[:batch_size]]
-
     return batch_xs , batch_ys
 
 
@@ -80,8 +80,6 @@ def get_error_indices(ep , ap , leaf_n):
     ep_same=[]
     assert len(ep_lines) == len(ap_lines) ,'{} | {}'.format(len(ep_lines),len(ap_lines))
 
-
-
     ep_lines=map( lambda line : map(int ,line.split(',')[:-1]), ep_lines) # line.split(',')[:-1] for delete \n
     ap_lines = map(lambda line: map(int, line.split(',')[:-1]), ap_lines)  # line.split(',')[:-1] for delete \n
     ep_lines=np.asarray(ep_lines)
@@ -101,10 +99,7 @@ def get_error_indices(ep , ap , leaf_n):
     print len(ep_larger_indices)
     print len(ep_less_indices)
     print len(ep_same_indices)
-
     return ep_, ap_ , ep_larger_indices , ep_less_indices  , ep_same_indices
-
-
 
 def plot_ep_ap_graph(ep, ap ,leaf_n):
     print 'plot_ep_ap_graph'
@@ -120,8 +115,6 @@ def plot_ep_ap_graph(ep, ap ,leaf_n):
     print len(ep_less_diff)
     print ep_less_diff.min()
 
-
-
     plt.figure(figsize=(50, 10))
     plt.scatter(x = ep_larger , y=ep_[ep_larger] , color='red' , label='ep larger than ap',)
     plt.scatter(x = ep_less , y=ep_[ep_less] ,color='blue' ,label='ep less than ap')
@@ -131,9 +124,6 @@ def plot_ep_ap_graph(ep, ap ,leaf_n):
     plot_ep_ap_graph(ep=ep_ , ap=ap_ , leaf_n=30)
     plt.plot(range(len(ap_)) , ap_)
     plt.savefig('./ap_.png')
-
-
-
 
 def get_min_max(*datum):
     for i,data in enumerate(datum):
@@ -148,12 +138,10 @@ def get_min_max(*datum):
                 max_ = np.max(data)
     return min_ ,max_
 
-
 def normalize(*datum):
     debug_flag_lv0 = True
     if __debug__ == debug_flag_lv0:
         print 'start :### debug | data.py | normalize'
-
     ret_list = []
     for i,data in enumerate(datum):
         assert type(data).__module__==np.__name__
@@ -191,7 +179,6 @@ def merge_all_data(dir_paths):
     debug_flag_lv0=True
     if __debug__ == debug_flag_lv0:
         print 'start : ### debug | data.py | merge_all_data'
-
     print 'the # of input paths:',len(dir_paths)
     xs=None;ys=None;
     for i,dir_path in enumerate(dir_paths):
@@ -290,11 +277,9 @@ def get_specified_leaf(leaf_num , *datum):
         if len(np.shape(data))==2:
             ret_data=ret_data.reshape([-1,1])
         ret_list.append(ret_data)
-
     if __debug__ == debug_flag_lv0:
         print 'end : ###end debug | data.py | get_specified_leaf'
     return ret_list
-
 #def next_batch(x,y,batch_size):
 
 

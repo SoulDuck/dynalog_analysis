@@ -34,6 +34,8 @@ else:
 
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
+print "########################"
+"""여기 위 까지 데이터 검증 완료"""
 
 print '##### directory paths #####'
 print dir_paths[n_train:]
@@ -49,10 +51,11 @@ default 셋팅으로 길이는 7 너비는 3 으로 설정하였기 때문에 �
 """
 
 assert len(ep) == len(test_ys) , len(test_ys)
-print 'ep',ep[:8]
-print 'test_ys',test_ys[:8]
-print 'test_xs',test_xs[:8]
+print 'ep',ep[:30]
+print 'test_ys',test_ys[:30]
+print 'test_xs',test_xs[:30]
 
+exit()
 min_ , max_ =data.get_min_max(train_xs, train_ys, test_xs, test_ys)
 print 'min', min_ , 'max' ,max_
 
@@ -137,7 +140,6 @@ with tf.Session() as sess:
     best_loss=0
     tmp_loss=0
     try:
-
         for i in range(iterations):
             print i
             if i<= reduced_lr1:
@@ -156,7 +158,7 @@ with tf.Session() as sess:
                 print("[step: {}] train loss: {}".format(i, train_loss))
                 test_writer.add_summary(merged_summaries , i)
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
-                acc=analysis.get_acc_with_ep(ep= test_xs , true = test_ys*normalize_factor , pred = test_predict*normalize_factor , error_range_percent=5)
+                acc=analysis.get_acc_with_ep(ep= ep , true = test_ys*normalize_factor , pred = test_predict*normalize_factor , error_range_percent=5)
                 print("[step: {}] test acc: {}".format(i, acc))
                 summary=tf.Summary(value = [tf.Summary.Value(tag='accuracy %s'%'test' , simple_value =float(acc))])
                 train_writer.add_summary(summary=summary , global_step=i )

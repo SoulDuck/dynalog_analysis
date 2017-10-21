@@ -1,3 +1,4 @@
+#-*- coding -*-
 import numpy as np
 import os , sys ,glob
 import pickle
@@ -29,15 +30,14 @@ def get_rtfile(folder='./log/'):
 def extract_points(folder_path):
     log=np.load(folder_path+'leaf.npy')
     log_head = np.load(folder_path + 'head.npy')
-
     f_head=open(folder_path+'head.txt','w')
     fs=[]
-    fs.append(open(folder_path+'/ap.txt' , 'w'))
     fs.append(open(folder_path + '/ep.txt' , 'w'))
+    fs.append(open(folder_path + '/ap.txt' , 'w'))
     fs.append(open(folder_path + '/pfp.txt','w'))
     fs.append(open(folder_path + '/nfp.txt','w'))
-
     n_lines,n_leaf,n_points=np.shape(log)
+
     for p_ind,f in enumerate(fs):
         #print 'a' ,np.shape(log[:, :, p_ind])
         lines=log[:, :, p_ind] #lines shape = (1490 , 60)
@@ -96,7 +96,7 @@ def analysis_dinalog():
         f = open(path)
         lines=f.readlines()
         n_lines=len(lines)
-        start_line=6
+        start_line=6 # why lines counter start at 6?
         end_line= n_lines
         head_info=[];leafs_matrix=[]
         n_leafs=60
@@ -115,8 +115,8 @@ def analysis_dinalog():
                 points_=elements[14 +( i * 4 ) :14+ ( i + 1 )*4]
                 leafs.append(points_)
             leafs_matrix.append(leafs) # all lines leafs was included leafs_matrix
-        save_file(os.path.join('./divided_log/'+index ),leafs_matrix , head_info)
-        extract_points('./divided_log/'+index+'/')
+        save_file(os.path.join('./divided_log/'+index ),leafs_matrix , head_info) #
+        extract_points('./divided_log/'+index+'/') #
 
         #head_points, ep_, ap_, pfp_, nfp_=map(np.asarray , [head_points , ep_ , ap_, pfp_  , nfp_])
         #dic_log=list2dic(index,head_points, ep_, ap_, pfp_, nfp_)
@@ -153,14 +153,14 @@ def get_acc_with_ep(ep ,true , pred  , error_range_percent):
     assert len(true) == len(pred)
     true_count = 0;
     for i, v in enumerate(true):
-        diff=abs(ep[i]-true[i])
+        diff=ep[i]-true[i]
 
         up_range=true[i]+diff*(error_range_percent / 100.)
         buttom_range=true[i]-diff*(error_range_percent / 100.)
-        print diff
-        print
-        print up_range
-        print buttom_range
+        if diff is not 0:
+            print 'diff ' ,diff
+        #print up_range
+        #print buttom_range
         if buttom_range<= pred[i] and pred[i] <= up_range:
 
             true_count += 1

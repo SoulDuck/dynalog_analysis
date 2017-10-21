@@ -39,8 +39,6 @@ for f in [1,10,20,30,40,50,57]:
 
     n, seq_length , n_col=np.shape(train_xs)
 
-
-
     """
     parser=argparse.ArgumentParser()
     parser.add_argument('--iter')
