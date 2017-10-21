@@ -172,11 +172,10 @@ def get_acc_with_ep(ep ,true , pred  , error_range_percent):
     for i, v in enumerate(true):
         up_range = true[i] + error_range_percent
         buttom_range = true[i] - error_range_percent
-
         #print up_range
         #print buttom_range
-    if buttom_range<= pred[i] and pred[i] <= up_range:
-        true_count += 1
+        if buttom_range<= pred[i] and pred[i] <= up_range:
+            true_count += 1
     acc=true_count/float(len(pred))
     print 'accuracy :' ,acc, 'error_range : ' , error_range_percent
     return acc
