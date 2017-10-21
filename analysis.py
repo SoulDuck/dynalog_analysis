@@ -157,21 +157,22 @@ def get_acc_with_ep(ep ,true , pred  , error_range_percent):
     assert len(true) == len(pred)
     true_count = 0;
     """type 1 of gettting accuracy """
+    """
     for i, v in enumerate(true):
+        
         diff=ep[i]-true[i]
-
         up_range=true[i]+diff*(error_range_percent / 100.)
         buttom_range=true[i]-diff*(error_range_percent / 100.)
-    """type 2 of gettting accuracy """
-    for i, v in enumerate(true):
-        diff = ep[i] - true[i]
-
-        up_range = true[i] + error_range_percent
-        buttom_range = true[i] - error_range_percent
 
     if debug_lv1:
         if diff is not 0:
-            print 'diff ' ,diff
+            print 'diff ', diff
+    """
+    """type 2 of gettting accuracy """
+    for i, v in enumerate(true):
+        up_range = true[i] + error_range_percent
+        buttom_range = true[i] - error_range_percent
+
         #print up_range
         #print buttom_range
     if buttom_range<= pred[i] and pred[i] <= up_range:

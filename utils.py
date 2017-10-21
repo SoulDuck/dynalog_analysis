@@ -11,8 +11,6 @@ def show_processing(i,maxiter):
 
 def plot_xy(test_predict , test_ys  , savename='./dynalog_result.png'):
 
-
-
     plt.plot(test_ys)
     plt.plot(test_predict)
     plt.xlabel("Time Period")
