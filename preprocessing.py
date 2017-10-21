@@ -58,14 +58,11 @@ def get_trainingData(folder_path , seq_length=7 , seq_width=3 ,save_is=True):
 
 
 if __name__ =='__main__':
-    """
+
     root_dir='./divided_log'
     path, subfolders , files=os.walk(root_dir).next()
     print '# subfolders ' , len(subfolders)
     for subfolder in subfolders:
         target_folder_path=os.path.join('./divided_log' , subfolder)
-        x_data , y_data = get_trainingData(target_folder_path)
-    """
-    subfolder='A20170614151153_RT02526 3'
-    target_folder_path=os.path.join('./divided_log' , subfolder)
-    x_data , y_data ,y1_data = get_trainingData(target_folder_path)
+        x_data , y_data, y1_data = get_trainingData(target_folder_path)
+
