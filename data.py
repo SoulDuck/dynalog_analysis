@@ -22,6 +22,9 @@ debug_flag_lv1 = True
 3.right leaf
 
 """
+
+
+
 def get_ap_all(dir_paths , leaf_n=30 , seq_length=7):
     for i,path in enumerate(dir_paths):
         ep=get_ap(path , leaf_n=leaf_n , seq_length=seq_length)
@@ -50,11 +53,6 @@ def get_ap(dir_path , leaf_n=30 , seq_length=7):
     else:
         print np.shape(values[seq_length+1: , leaf_n]) #ep을 기준으로 ap의 상대적인 위치을 기록한다 그래서 +1 을 더한다
         return values[seq_length+1: , leaf_n]
-
-
-
-
-
 
 def get_ep_all(dir_paths , leaf_n=30 , seq_length=7):
     for i,path in enumerate(dir_paths):
@@ -95,9 +93,6 @@ def next_batch(x , y , batch_size):
     return batch_xs , batch_ys
 
 
-
-
-
 def get_error_indices(ep, ap):
     assert np.shape(ep) == np.shape(ap)
     """
@@ -118,6 +113,10 @@ def get_error_indices(ep, ap):
     print len(ep_less_indices)
     print len(ep_same_indices)
     return ep_larger_indices , ep_less_indices  , ep_same_indices
+
+def plot_pred_ap_graph(pred , ap):
+
+    ep_larger, ep_less, ep_same = get_error_indices(ep, ap)
 
 def plot_ep_ap_graph(ep, ap):
     print 'plot_ep_ap_graph'
