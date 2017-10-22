@@ -7,6 +7,8 @@ import utils
 import random
 import analysis
 import matplotlib.pyplot as plt
+debug_flag_lv0=True
+debug_flag_lv1 = True
 """
 --- 3 --
  _  _  _ 
@@ -20,6 +22,38 @@ import matplotlib.pyplot as plt
 3.right leaf
 
 """
+def get_ap_all(dir_paths , leaf_n=30 , seq_length=7):
+    for i,path in enumerate(dir_paths):
+        ep=get_ap(path , leaf_n=leaf_n , seq_length=seq_length)
+        if i ==0:
+            tmp_arr=ep[:]
+        else:
+            tmp_arr=np.hstack((tmp_arr, ep[:] ))
+            print tmp_arr
+    return tmp_arr
+
+def get_ap(dir_path , leaf_n=30 , seq_length=7):
+    f=open(os.path.join(dir_path , 'ap.txt'))
+    lines=f.readlines()
+    for i, line in enumerate(lines):
+
+        #print line.split(',')[:-1]
+        if i ==0:
+            values=map(int , line.split(',')[:-1])
+        else:
+            values=np.vstack((values , map(int , line.split(',')[:-1])))
+    print "### value shape ###"
+    print np.shape(values)
+
+    if leaf_n ==None:
+        return values
+    else:
+        print np.shape(values[seq_length+1: , leaf_n]) #ep을 기준으로 ap의 상대적인 위치을 기록한다 그래서 +1 을 더한다
+        return values[seq_length+1: , leaf_n]
+
+
+
+
 
 
 def get_ep_all(dir_paths , leaf_n=30 , seq_length=7):
@@ -62,36 +96,20 @@ def next_batch(x , y , batch_size):
 
 
 
-def get_error_indices(ep , ap , leaf_n):
+
+
+def get_error_indices(ep, ap):
+    assert np.shape(ep) == np.shape(ap)
     """
     :param ep:
     :param ap:
     :param leaf_n:
     :return: return ep_larger_indices , ep_less_indices  , ep_same_indices
     """
-
-    f_ep=open(ep , 'r')
-    f_ap=open(ap , 'r')
-    ep_lines = f_ep.readlines()
-    ap_lines = f_ap.readlines()
-
-    ep_larger=[] # ep_larger than ap
-    ep_less=[] # ep less than ap
-    ep_same=[]
-    assert len(ep_lines) == len(ap_lines) ,'{} | {}'.format(len(ep_lines),len(ap_lines))
-
-    ep_lines=map( lambda line : map(int ,line.split(',')[:-1]), ep_lines) # line.split(',')[:-1] for delete \n
-    ap_lines = map(lambda line: map(int, line.split(',')[:-1]), ap_lines)  # line.split(',')[:-1] for delete \n
-    ep_lines=np.asarray(ep_lines)
-    ap_lines = np.asarray(ap_lines)
-    ep_=ep_lines[:,leaf_n]
-    ap_ = ap_lines[:, leaf_n]
-    a=np.zeros(len(ep_))
-
     #numpy indexing
-    ep_larger_indices=np.squeeze(np.where(ep_ > ap_))
-    ep_less_indices = np.squeeze(np.where(ep_ < ap_))
-    ep_same_indices = np.squeeze(np.where(ep_ == ap_))
+    ep_larger_indices=np.squeeze(np.where(ep > ap))
+    ep_less_indices = np.squeeze(np.where(ep < ap))
+    ep_same_indices = np.squeeze(np.where(ep == ap))
 
     assert len(ep_larger_indices)+len(ep_less_indices)+len(ep_same_indices) == len(ep_)\
         ,'# ep larger indices : {} , # ep less indices : {} , # ep same indices {} , # total ep {}'.format(\
@@ -99,30 +117,30 @@ def get_error_indices(ep , ap , leaf_n):
     print len(ep_larger_indices)
     print len(ep_less_indices)
     print len(ep_same_indices)
-    return ep_, ap_ , ep_larger_indices , ep_less_indices  , ep_same_indices
+    return ep_larger_indices , ep_less_indices  , ep_same_indices
 
-def plot_ep_ap_graph(ep, ap ,leaf_n):
+def plot_ep_ap_graph(ep, ap):
     print 'plot_ep_ap_graph'
-    ep_ , ap_ ,ep_larger , ep_less , ep_same = get_error_indices(ep ,ap ,leaf_n)
 
-    ep_large_diff=ep_[ep_larger] - ap_[ep_larger]
+    ep_larger , ep_less , ep_same = get_error_indices(ep ,ap )
+
+    ep_large_diff=ep[ep_larger] - ap[ep_larger]
     print ep_large_diff
     print len(ep_large_diff)
     print ep_large_diff.max()
 
-    ep_less_diff = ep_[ep_less] - ap_[ep_less]
+    ep_less_diff = ep[ep_less] - ap[ep_less]
     print ep_less_diff
     print len(ep_less_diff)
     print ep_less_diff.min()
 
     plt.figure(figsize=(50, 10))
-    plt.scatter(x = ep_larger , y=ep_[ep_larger] , color='red' , label='ep larger than ap',)
-    plt.scatter(x = ep_less , y=ep_[ep_less] ,color='blue' ,label='ep less than ap')
-    plt.scatter(x = ep_same , y=ep_[ep_same],color='green' ,label = 'ep same as ap ')
+    plt.scatter(x = ep_larger , y=ep[ep_larger] , color='red' , label='ep larger than ap',)
+    plt.scatter(x = ep_less , y=ep[ep_less] ,color='blue' ,label='ep less than ap')
+    plt.scatter(x = ep_same , y=ep[ep_same],color='green' ,label = 'ep same as ap ')
     plt.show()
     plt.savefig('./ep_diff_from_ap.png')
-    plot_ep_ap_graph(ep=ep_ , ap=ap_ , leaf_n=30)
-    plt.plot(range(len(ap_)) , ap_)
+    plt.plot(range(len(ap)) , ap)
     plt.savefig('./ap_.png')
 
 def get_min_max(*datum):
@@ -139,7 +157,6 @@ def get_min_max(*datum):
     return min_ ,max_
 
 def normalize(*datum):
-    debug_flag_lv0 = True
     if __debug__ == debug_flag_lv0:
         print 'start :### debug | data.py | normalize'
     ret_list = []
@@ -168,7 +185,6 @@ def normalize(*datum):
 
 
 def get_data(folder_path):
-    debug_flag_lv0 = False
     if __debug__ == debug_flag_lv0:
         print '### debug | data.py | get_data'
     x_data = np.load(os.path.join(folder_path ,'x_data.npy'))
@@ -176,13 +192,17 @@ def get_data(folder_path):
     return x_data, y_data
 
 def merge_all_data(dir_paths):
-    debug_flag_lv0=True
     if __debug__ == debug_flag_lv0:
         print 'start : ### debug | data.py | merge_all_data'
     print 'the # of input paths:',len(dir_paths)
     xs=None;ys=None;
     for i,dir_path in enumerate(dir_paths):
         x,y=get_data(dir_path)
+
+        if __debug__ == debug_flag_lv0:
+            print 'x shape',np.shape(x)
+            print 'y shape',np.shape(y)
+
         if i==0:
             xs=x
             ys=y
@@ -198,7 +218,7 @@ def merge_all_data(dir_paths):
 def get_train_test_xy_data(x_data , y_data , test_ratio):
     start_time=time.time()
     debug_flag=True
-    debug_flag_lv1=True
+
     debug_flag_lv2=True
     if __debug__ == debug_flag:
         print '### debug | data.py | get_train_test_xy_data'
@@ -229,7 +249,6 @@ def get_train_test_xy_data(x_data , y_data , test_ratio):
 def merge_xy_data(root_dir= './divided_log' , limit=None):
     # /divided_log 에 있는 x_data , y_data 을 다 긁어 모은다. 붙인다(concatenate)
     # 그리고 반혼한다
-    debug_flag_lv0 = True
     if __debug__ == debug_flag_lv0:
         print 'start : ###debug | data.py | get_specified_leaf'
         print 'limit',limit
@@ -268,7 +287,6 @@ def merge_xy_data(root_dir= './divided_log' , limit=None):
 
 def get_specified_leaf(leaf_num , *datum):
     ret_list=[]
-    debug_flag_lv0=True
     if __debug__ == debug_flag_lv0:
         print 'start : ###debug | data.py | get_specified_leaf'
     for data in datum:
@@ -284,21 +302,39 @@ def get_specified_leaf(leaf_num , *datum):
 
 
 if __name__ == '__main__':
-    """
+    TEST_SET=['./divided_log/A20170615085606_RT02473', './divided_log/A20170615083340_RT02494', './divided_log/A20170620103113_RT02468']
+    ep_all=get_ep_all(TEST_SET,leaf_n=31) # 해당 ep ap 을 저장한다
+    ap_all = get_ap_all(TEST_SET ,leaf_n=31)
+    print 'ep shape : ',np.shape(ep_all)
+    print 'ap shape : ',np.shape(ap_all)
+    plt.plot(range(len(ep_all)) , ep_all)
+    plt.savefig('ep.png')
+    plt.close()
+    plt.plot(range(len(ap_all)) , ap_all)
+    plt.savefig('ap.png')
+    plt.close()
+
+
     #merge_xy_data(limit=2)
+    leaf_num=30
     root_path , names , files=os.walk('./divided_log').next()
     dir_paths=map(lambda name : os.path.join(root_path , name) , names )
     #xs,ys=merge_all_data(dir_paths[:2])
     dir_paths=dir_paths[:1]
     ap_paths = os.path.join(dir_paths[0], 'ap.txt')
     ep_paths = os.path.join(dir_paths[0], 'ep.txt')
-    ep_, ap_, ep_larger_indices, ep_less_indices, ep_same_indices=get_error_indices(ep=ep_paths , ap=ap_paths , leaf_n=30)
+    ep_=get_ep_all(TEST_SET , leaf_num+1 , seq_length=7)
 
-    plt.close()
+
+    ep_larger_indices, ep_less_indices, ep_same_indices=get_error_indices(ep=ep_all, ap=ap_all )
+    plot_ep_ap_graph(ep_all,ap_all)
     plt.figure(figsize=(10, 50))
-    plt.scatter(x=ep_larger_indices ,y= ep_[ep_larger_indices]  ,s=2)
-    plt.scatter(x=ep_larger_indices ,y= ap_[ep_larger_indices] ,s=2)
-    plt.savefig('tmp3.png')
-    """
-    get_ep('./divided_log/A20170614151153_RT02526/ep.txt')
+    plt.scatter(x=ep_larger_indices ,y= ep_all[ep_larger_indices] ,s=2)
+    plt.scatter(x=ep_larger_indices ,y= ap_all[ep_larger_indices] ,s=2)
+    plt.savefig('ep_ap_analysis.png')
+
+
+
+
+
 

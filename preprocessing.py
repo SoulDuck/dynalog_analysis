@@ -58,7 +58,6 @@ def get_trainingData(folder_path , seq_length=7 , seq_width=3 ,save_is=True):
 
 
 if __name__ =='__main__':
-
     root_dir='./divided_log'
     path, subfolders , files=os.walk(root_dir).next()
     print '# subfolders ' , len(subfolders)

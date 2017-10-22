@@ -4,9 +4,11 @@ import numpy as np
 import os,sys,glob
 import matplotlib
 import analysis
+
 if "DISPLAY" not in os.environ:
     # remove Travis CI Error
     matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
 import data
 import argparse
@@ -24,16 +26,23 @@ n_train=-3
 batch_size=60
 root_path, names, files = os.walk('./divided_log').next()
 dir_paths = map(lambda name: os.path.join(root_path, name), names)
+
 print 'dir paths : ',dir_paths[:]
 print 'length',len(dir_paths)
-
 if debug_flag_test:
-    dir_paths=dir_paths[:5]
+    dir_paths=dir_paths[:]
 else:
-    dir_paths = dir_paths[:]
+    dir_paths = dir_paths[:5]
+print dir_paths[n_train:]
 
-train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
+TEST_SET=['./divided_log/A20170615085606_RT02473', './divided_log/A20170615083340_RT02494', './divided_log/A20170620103113_RT02468']
+test_xs , test_ys=data.merge_all_data(TEST_SET)
+plt.plot(range(len(test_ys)) , test_ys[:,leaf_num] )
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
+
+plt.savefig('tmp.png')
+plt.show()
+train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
 print "########################"
 """여기 위 까지 데이터 검증 완료"""
 
@@ -119,7 +128,7 @@ pred=tf.identity(pred , name='pred')
 print 'FC layer output shape :',pred
 # cost/loss
 loss = tf.reduce_sum(tf.square(pred - y_) , name='loss')  # sum of the squares
-tf.summary.scalar('accuracy', loss)
+tf.summary.scalar('loss', loss)
 tf.summary.scalar('learning_rate', lr_)
 # optimizer
 optimizer = tf.train.AdamOptimizer(lr_)
@@ -157,7 +166,10 @@ with tf.Session() as sess:
                 print("[step: {}] test loss: {}".format(i, test_loss))
                 print("[step: {}] train loss: {}".format(i, train_loss))
                 test_writer.add_summary(merged_summaries , i)
-                utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_'+str(i)+'.png')
+
+                utils.plot_xy(test_predict=test_predict, test_ys=test_ys , savename='./graph/dynalog_result_normalize_'+str(i)+'.png')
+                utils.plot_xy(test_predict=test_predict*normalize_factor, test_ys=test_ys*normalize_factor,
+                              savename='./graph/dynalog_result_orignal_' + str(i) + '.png')
                 acc=analysis.get_acc_with_ep(ep= ep , true = test_ys*normalize_factor , pred = test_predict*normalize_factor , error_range_percent=30)
                 print("[step: {}] test acc: {}".format(i, acc))
                 summary=tf.Summary(value = [tf.Summary.Value(tag='accuracy %s'%'test' , simple_value =float(acc))])
@@ -173,6 +185,7 @@ with tf.Session() as sess:
                         saver.save(sess=sess, save_path='./models/acc_{}_loss_{}.ckpt'.format(str(best_acc)[:4], str(best_loss)[:4]),
                                    global_step=i)
                         print 'model saved'
+                saver.save(sess=sess, save_path='./models/{}'.format(str(i),global_step=i))
             _, train_loss , merged_summaries = sess.run([train, loss , merged], feed_dict={x_: train_xs, y_: train_ys, lr_:learning_rate})
             train_writer.add_summary(merged_summaries, i)
         # Test step

@@ -18,16 +18,29 @@ def eval(x , y , error_range_percent , model_path , model_extension=None):
 
     x_ = tf.get_default_graph().get_tensor_by_name('x_:0')
     y_ = tf.get_default_graph().get_tensor_by_name('y_:0')
-    pred = tf.get_default_graph().get_tensor_by_name('pred:0')
+    pred_op= tf.get_default_graph().get_tensor_by_name('pred:0')
     loss_op= tf.get_default_graph().get_tensor_by_name('loss:0')
-    fetches=[pred , loss_op]
-    pred_ , loss_=sess.run(fetches=fetches , feed_dict={x_:x , y_:y})
-    print y[:10]
-    print pred_[:10]
-    acc=analysis.get_acc_with_ep(ep=x ,true=y , pred=pred_ , error_range_percent=5)
+    fetches=[pred_op , loss_op]
+    pred , loss=sess.run(fetches=fetches , feed_dict={x_:x , y_:y})
+    #print y[:10]
+    #print pred[:10]
+    acc=analysis.get_acc_with_ep(ep=x ,true=y , pred=pred , error_range_percent=error_range_percent)
     sess.close()
 
-    return acc
+    return pred , loss , acc
+
+
+if '__main__'==__name__:
+    TEST_SET = ['./divided_log/A20170615085606_RT02473', './divided_log/A20170615083340_RT02494',
+                './divided_log/A20170620103113_RT02468']
+    test_xs, test_ys = data.merge_all_data(TEST_SET)
+    test_xs=test_xs[:,30,:,:]
+    test_ys = test_ys[:, 30].reshape([-1,1])
+
+
+
+    pred , loss , acc =eval(test_xs, test_ys,500,model_path='models/1/40200')
+
 
 
 
