@@ -40,6 +40,10 @@ test_xs , test_ys=data.merge_all_data(TEST_SET)
 plt.plot(range(len(test_ys)) , test_ys[:,leaf_num] )
 test_xs , test_ys=data.merge_all_data(dir_paths[n_train:])
 
+print test_xs[0][0]
+print test_ys[0]
+exit()
+
 plt.savefig('tmp.png')
 plt.show()
 train_xs , train_ys=data.merge_all_data(dir_paths[:n_train])
