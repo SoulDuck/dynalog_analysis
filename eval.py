@@ -52,7 +52,22 @@ if '__main__'==__name__:
     test_xs=test_xs/normalize_factor
     test_ys=test_ys/normalize_factor
 
-    pred , loss , acc =eval(test_xs, test_ys,2,  model_path='models/1/40200', normalize_factor= normalize_factor)
+    pred , loss , acc =eval(test_xs, test_ys,4,  model_path='models/1/40200', normalize_factor= normalize_factor)
+    print np.shape(pred)
+    f=open('pred.txt' ,'w')
+    for i in range(len(pred)):
+        f.write(str(pred[i][0])+'\n')
+    f.close()
+
+    test_ys=test_ys*normalize_factor
+    f = open('ap.txt', 'w')
+    for i in range(len(test_ys)):
+        f.write(str(test_ys[i][0]) + '\n')
+    f.close()
+
+
+
+
 
 
 
