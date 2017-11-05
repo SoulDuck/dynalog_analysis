@@ -180,20 +180,23 @@ def normalize(*datum):
     return ret_list
 
 
-def get_data(folder_path):
+def get_data(folder_path , bcg_flag = False ):
     if __debug__ == debug_flag_lv0:
         print '### debug | data.py | get_data'
-    x_data = np.load(os.path.join(folder_path ,'x_data.npy'))
+    if bcg_flag == True :
+        x_data = np.load(os.path.join(folder_path ,'x_data_BCG.npy'))
+    else :
+        x_data = np.load(os.path.join(folder_path, 'x_data.npy'))
     y_data = np.load(os.path.join(folder_path ,'y_data.npy'))
     return x_data, y_data
 
-def merge_all_data(dir_paths):
+def merge_all_data(dir_paths,bcg_flag = False):
     if __debug__ == debug_flag_lv0:
         print 'start : ### debug | data.py | merge_all_data'
     print 'the # of input paths:',len(dir_paths)
     xs=None;ys=None;
     for i,dir_path in enumerate(dir_paths):
-        x,y=get_data(dir_path)
+        x,y=get_data(dir_path , bcg_flag)
         if __debug__ == debug_flag_lv0:
             print 'x shape',np.shape(x)
             print 'y shape',np.shape(y)

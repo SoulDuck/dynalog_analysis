@@ -36,6 +36,7 @@ def get_trainingData(folder_path , seq_length=7 , seq_width=3 ,save_is=True):
         y=ap_[r+seq_length] #(7,60)
         y1= ap_[r + seq_length+1] #(7,60)
         head_x=heads[r:r+seq_length]
+
         for c in range(n_leaf-seq_width+1):
             x_data[r, c,:,:]=x[:,c:c+seq_width]
             x_BCG_data[r,c,:,:seq_width]=x[:,c:c+seq_width]
@@ -47,13 +48,12 @@ def get_trainingData(folder_path , seq_length=7 , seq_width=3 ,save_is=True):
             y1_data[r, c] = y1[c + 1]
 
     print 'x with B C G data shape : {} '.format(np.shape(x_BCG_data))
-    print x_BCG_data[0,0,:,3]
-    print x_BCG_data[1, 0, :, 3]
-    print x_BCG_data[0, 1, :, 3]
-    print head_x[:7, 2:3]
+    #print x_BCG_data[0, 0, :, 3]
+    #print x_BCG_data[1, 0, :, 3]
+    #print x_BCG_data[0, 1, :, 3]
+    #print heads[:14, 3:4]
 
 
-    exit()
 
     np.save(os.path.join(folder_path, 'x_data_BCG.npy'), x_BCG_data)
     np.save(os.path.join(folder_path ,'x_data.npy'), x_data)
