@@ -35,7 +35,6 @@ print 'length', len(dir_paths)
 else:
     dir_paths = dir_paths[:5]
 """
-print dir_paths[n_train:]
 print 'test :',len(dir_paths[n_train:])
 print 'train :',len(dir_paths[:n_train])
 
@@ -148,7 +147,7 @@ if not os.path.isdir('./graph'):
     os.mkdir('./graph')
 with tf.Session() as sess:
     merged = tf.summary.merge_all()
-    saver = tf.train.Saver()
+    saver = tf.train.Saver(max_to_keep=100000)
     train_writer = tf.summary.FileWriter(logdir='./logs/train')
     test_writer = tf.summary.FileWriter(logdir='./logs/test')
     init = tf.global_variables_initializer()
@@ -177,17 +176,46 @@ with tf.Session() as sess:
                                                                                           lr_: learning_rate})
                 print("[step: {}] test loss: {}".format(i, test_loss))
                 print("[step: {}] train loss: {}".format(i, train_loss))
-                test_writer.add_summary(merged_summaries, i)
+                test_writer.add_summary(merged_summaries, i) # merged_summaries loss , learning rate
 
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys,
                               savename='./graph/dynalog_result_normalize_' + str(i) + '.png')
                 utils.plot_xy(test_predict=test_predict * normalize_factor, test_ys=test_ys * normalize_factor,
                               savename='./graph/dynalog_result_orignal_' + str(i) + '.png')
-                acc = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
-                                               pred=test_predict * normalize_factor, error_range_percent=30)
-                print("[step: {}] test acc: {}".format(i, acc))
-                summary = tf.Summary(value=[tf.Summary.Value(tag='accuracy %s' % 'test', simple_value=float(acc))])
-                train_writer.add_summary(summary=summary, global_step=i)
+                acc_1 = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
+                                               pred=test_predict * normalize_factor, error_range_percent=1)
+                acc_2 = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
+                                               pred=test_predict * normalize_factor, error_range_percent=2)
+                acc_3 = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
+                                               pred=test_predict * normalize_factor, error_range_percent=3)
+                acc_4 = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
+                                               pred=test_predict * normalize_factor, error_range_percent=4)
+                acc_5 = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
+                                               pred=test_predict * normalize_factor, error_range_percent=5)
+                acc_6 = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
+                                               pred=test_predict * normalize_factor, error_range_percent=6)
+                acc=acc_3
+                print("[error range 1 : step: {}] test acc: {}".format(i, acc_1))
+                print("[error range 2 : step: {}] test acc: {}".format(i, acc_2))
+                print("[error range 3 : step: {}] test acc: {}".format(i, acc_3))
+                print("[error range 4 : step: {}] test acc: {}".format(i, acc_4))
+                print("[error range 5 : step: {}] test acc: {}".format(i, acc_5))
+                print("[error range 6 : step: {}] test acc: {}".format(i, acc_6))
+
+                summary = tf.Summary(value=[tf.Summary.Value(tag='accuracy error range 1 %s' % 'test', simple_value=float(acc_1))])
+                test_writer.add_summary(summary=summary, global_step=i)
+                summary = tf.Summary(value=[tf.Summary.Value(tag='accuracy error range 2 %s' % 'test', simple_value=float(acc_2))])
+                test_writer.add_summary(summary=summary, global_step=i)
+                summary = tf.Summary(value=[tf.Summary.Value(tag='accuracy error range 3 %s' % 'test', simple_value=float(acc_3))])
+                test_writer.add_summary(summary=summary, global_step=i)
+                summary = tf.Summary(value=[tf.Summary.Value(tag='accuracy error range 4 %s' % 'test', simple_value=float(acc_4))])
+                test_writer.add_summary(summary=summary, global_step=i)
+                summary = tf.Summary(value=[tf.Summary.Value(tag='accuracy error range 5 %s' % 'test', simple_value=float(acc_5))])
+                test_writer.add_summary(summary=summary, global_step=i)
+                summary = tf.Summary(value=[tf.Summary.Value(tag='accuracy error range 6 %s' % 'test', simple_value=float(acc_6))])
+                test_writer.add_summary(summary=summary, global_step=i)
+
+
                 if best_acc < acc:
                     best_acc = acc
                     tmp_loss = test_loss

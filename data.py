@@ -196,16 +196,20 @@ def merge_all_data(dir_paths,bcg_flag = False):
     print 'the # of input paths:',len(dir_paths)
     xs=None;ys=None;
     for i,dir_path in enumerate(dir_paths):
-        x,y=get_data(dir_path , bcg_flag)
-        if __debug__ == debug_flag_lv0:
-            print 'x shape',np.shape(x)
-            print 'y shape',np.shape(y)
-        if i==0:
-            xs=x
-            ys=y
-        else:
-            xs=np.concatenate([xs, x], axis=0)
-            ys=np.concatenate([ys, y], axis=0)
+        try:
+            x,y=get_data(dir_path , bcg_flag)
+            if __debug__ == debug_flag_lv0:
+                print 'x shape',np.shape(x)
+                print 'y shape',np.shape(y)
+            if i==0:
+                xs=x
+                ys=y
+            else:
+                xs=np.concatenate([xs, x], axis=0)
+                ys=np.concatenate([ys, y], axis=0)
+        except:
+            print dir_path
+            continue;
     if __debug__ == debug_flag_lv0:
         print 'merged x shape :',np.shape(xs)
         print 'merged y shape :',np.shape(ys)
