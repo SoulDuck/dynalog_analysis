@@ -30,11 +30,14 @@ dir_paths = map(lambda name: os.path.join(root_path, name), names)
 
 print 'dir paths : ', dir_paths[:]
 print 'length', len(dir_paths)
-if debug_flag_test:
+"""if debug_flag_test:
     dir_paths = dir_paths[:]
 else:
     dir_paths = dir_paths[:5]
+"""
 print dir_paths[n_train:]
+print 'test :',len(dir_paths[n_train:])
+print 'train :',len(dir_paths[:n_train])
 
 #TEST_SET = ['./divided_log/A20170615085606_RT02473', './divided_log/A20170615083340_RT02494',
 #            './divided_log/A20170620103113_RT02468']
@@ -44,6 +47,13 @@ test_xs, test_ys = data.merge_all_data(dir_paths[n_train:] , True )
 plt.savefig('tmp.png')
 plt.show()
 train_xs, train_ys = data.merge_all_data(dir_paths[:n_train] , True )
+
+if __debug__ == True:
+    print 'shape train xs', np.shape(train_xs)
+    print 'shape test xs', np.shape(test_xs)
+    print 'shape train ys', np.shape(train_ys)
+    print 'shape test ys', np.shape(test_ys)
+
 print "########################"
 """여기 위 까지 데이터 검증 완료"""
 
