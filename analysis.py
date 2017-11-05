@@ -115,7 +115,7 @@ def analysis_dinalog():
                 points_=elements[14 +( i * 4 ) :14+ ( i + 1 )*4]
                 leafs.append(points_)
             leafs_matrix.append(leafs) # all lines leafs was included leafs_matrix
-        print 'header info {} , leaf info {}'.format(str(head_info), str(leafs_matrix))
+        print 'header info {} , leaf info {}'.format(str(np.shape(head_info)), str(np.shape(leafs_matrix)))
         assert np.shape(head_info)[0]  == np.shape(leafs_matrix)[0]
         save_file(os.path.join('./divided_log/'+index ),leafs_matrix , head_info) #
         extract_points('./divided_log/'+index+'/') #
