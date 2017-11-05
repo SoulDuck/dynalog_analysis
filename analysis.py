@@ -51,8 +51,6 @@ def extract_points(folder_path):
     for head in log_head:
         for ele in head:
             f_head.write(ele+'\t')
-
-
         f_head.write('\n')
 
 def save_file(filepath ,leafs_matrix , head_info ):
@@ -106,13 +104,13 @@ def analysis_dinalog():
         for l in range(start_line , end_line):
             leafs = []
             elements=lines[l].split(',')
-            head_info.append(elements[0:14]) # all lines heads was included leafs_matrix
             try:
                 if len(elements) != 254:
                     raise ValueError
             except ValueError:
                 print 'we skip this line',l+1, 'because the # line elements ',len(elements) ,'not 254', 'file_name',index
                 continue
+            head_info.append(elements[0:14])  # all lines heads was included leafs_matrix
             for i in range(n_leafs):
                 points_=elements[14 +( i * 4 ) :14+ ( i + 1 )*4]
                 leafs.append(points_)
