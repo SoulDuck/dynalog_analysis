@@ -74,7 +74,6 @@ for f in [1,10,20,30,40,50,57]:
 #        self.summary_writer = logswriter(logdir=self.logs_path)
         init = tf.global_variables_initializer()
         sess.run(init)
-        # Training step
         try:
             for i in range(iterations):
                 if i%check_point ==0:
@@ -104,9 +103,7 @@ for f in [1,10,20,30,40,50,57]:
             np.save('./' + str(f) + '/last_predict.npy' , test_predict)
             np.save('./' + str(f) + '/true_original.npy' , test_ys)
             utils.plot_xy(test_predict=test_predict, test_ys=test_ys,savename='./' + str(f) + '/dynalog_result_last.png')
-
             #np.save('./test_ep.npy',test_xs[])
-
     tf.reset_default_graph()
 
 

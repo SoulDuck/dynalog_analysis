@@ -194,11 +194,9 @@ def merge_all_data(dir_paths):
     xs=None;ys=None;
     for i,dir_path in enumerate(dir_paths):
         x,y=get_data(dir_path)
-
         if __debug__ == debug_flag_lv0:
             print 'x shape',np.shape(x)
             print 'y shape',np.shape(y)
-
         if i==0:
             xs=x
             ys=y
