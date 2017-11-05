@@ -114,9 +114,6 @@ def get_error_indices(ep, ap):
     print len(ep_same_indices)
     return ep_larger_indices , ep_less_indices  , ep_same_indices
 
-def plot_pred_ap_graph(pred , ap):
-
-    ep_larger, ep_less, ep_same = get_error_indices(ep, ap)
 
 def plot_ep_ap_graph(ep, ap):
     print 'plot_ep_ap_graph'
