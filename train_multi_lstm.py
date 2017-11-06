@@ -99,7 +99,7 @@ parser.add_argument('--iter')
 parser.add_argument('--learning_rate')
 """
 
-data_dim=3
+data_dim=n_col
 hidden_dim=30
 output_dim=1
 init_lr=0.01

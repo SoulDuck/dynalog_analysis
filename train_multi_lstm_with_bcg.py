@@ -136,7 +136,7 @@ pred = tf.contrib.layers.fully_connected(
 pred = tf.identity(pred, name='pred')
 print 'FC layer output shape :', pred
 # cost/loss
-loss = tf.reduce_sum(tf.square(pred - y_), name='loss')  # sum of the squares
+loss = tf.reduce_sum(tf.square(pred - y_), name='loss')  # sum of the square
 tf.summary.scalar('loss', loss)
 tf.summary.scalar('learning_rate', lr_)
 # optimizer
@@ -214,7 +214,6 @@ with tf.Session() as sess:
                 test_writer.add_summary(summary=summary, global_step=i)
                 summary = tf.Summary(value=[tf.Summary.Value(tag='accuracy error range 6 %s' % 'test', simple_value=float(acc_6))])
                 test_writer.add_summary(summary=summary, global_step=i)
-
 
                 if best_acc < acc:
                     best_acc = acc
