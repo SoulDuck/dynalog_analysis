@@ -43,27 +43,33 @@ def eval(x , y , error_range_percent , model_path , normalize_factor, model_exte
 
 
 if '__main__'==__name__:
-    normalize_factor=10000.
-    TEST_SET = ['./divided_log/A20170615085606_RT02473', './divided_log/A20170615083340_RT02494',
-                './divided_log/A20170620103113_RT02468']
-    test_xs, test_ys = data.merge_all_data(TEST_SET)
+    normalize_factor = 10000.
+    TEST_SET = ['./divided_log/A20170620082707_RT02494', './divided_log/A20170615101520_RT02468',
+                './divided_log/A20170615142236_RT02526']
+    test_xs, test_ys = data.merge_all_data(TEST_SET , True)
+    print np.shape(test_xs)
+
     test_xs=test_xs[:,30,:,:]
     test_ys = test_ys[:, 30].reshape([-1,1])
     test_xs=test_xs/normalize_factor
     test_ys=test_ys/normalize_factor
 
-    pred , loss , acc =eval(test_xs, test_ys,4,  model_path='models/1/40200', normalize_factor= normalize_factor)
+    pred , loss , acc =eval(test_xs, test_ys,4,  model_path='models/bcg/149900', normalize_factor= normalize_factor)
     print np.shape(pred)
     f=open('pred.txt' ,'w')
     for i in range(len(pred)):
         f.write(str(pred[i][0])+'\n')
     f.close()
-
     test_ys=test_ys*normalize_factor
     f = open('ap.txt', 'w')
     for i in range(len(test_ys)):
         f.write(str(test_ys[i][0]) + '\n')
     f.close()
+    f = open('ep.txt', 'w')
+    for i in range(len(test_xs)):
+        f.write(str(test_xs[i][0]) + '\n')
+    f.close()
+
 
 
 

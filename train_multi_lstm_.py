@@ -256,3 +256,4 @@ with tf.Session() as sess:
                   model_path='./models/acc_{}_loss_{}-100'.format(str(best_acc)[:4], str(tmp_loss)[:4]))
 
         # np.save('./test_ep.npy',test_xs[])
+['./divided_log/A20170620082707_RT02494', './divided_log/A20170615101520_RT02468', './divided_log/A20170615142236_RT02526']

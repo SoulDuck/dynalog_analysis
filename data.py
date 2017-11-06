@@ -190,6 +190,8 @@ def get_data(folder_path , bcg_flag = False ):
     y_data = np.load(os.path.join(folder_path ,'y_data.npy'))
     return x_data, y_data
 
+
+
 def merge_all_data(dir_paths,bcg_flag = False):
     if __debug__ == debug_flag_lv0:
         print 'start : ### debug | data.py | merge_all_data'
@@ -207,8 +209,9 @@ def merge_all_data(dir_paths,bcg_flag = False):
             else:
                 xs=np.concatenate([xs, x], axis=0)
                 ys=np.concatenate([ys, y], axis=0)
-        except:
+        except Exception as e :
             print dir_path
+            print e
             continue;
     if __debug__ == debug_flag_lv0:
         print 'merged x shape :',np.shape(xs)
