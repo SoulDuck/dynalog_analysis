@@ -2,13 +2,16 @@
 
 ![Alt Text](./pic/1.png)
 
+## Dynalog Infomation 
+
 ![Alt Text](./pic/2.png)
 
-
-Usage:
-![Alt Text](./pic/3.png)
+## 
 
 ![Alt Text](./pic/5.png)
+![Alt Text](./pic/3.png)
+
+
 
 
 ![Alt Text](./pic/6.png)
