@@ -2,11 +2,11 @@
 
 ![Alt Text](./pic/1.png)
 
-## Dynalog Infomation 
+## 1.Dynalog Infomation 
 
 ![Alt Text](./pic/2.png)
 
-## 
+## 2.Dynalog Preprocessing 
 
 ![Alt Text](./pic/5.png)
 ![Alt Text](./pic/3.png)
