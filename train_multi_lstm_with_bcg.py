@@ -35,7 +35,7 @@ import eval
 debug_flag_lv0 = False
 debug_flag_lv1 = True
 debug_flag_lv2 = False
-debug_flag_test = True
+debug_flag_test = args.debug_test
 if __debug__ == debug_flag_lv0:
     print '###debug | train.py |'
 
