@@ -44,17 +44,31 @@ def get_trainingData(folder_path , seq_length=7 , seq_width=3 ,save_is=True):
             x_BCG_data[r, c, :, seq_width:seq_width + 1] = head_x[:, 3:4] # BeamOfOff
             x_BCG_data[r, c, :, seq_width+1:seq_width + 2] = head_x[:, 6:7] #Colimator
             x_BCG_data[r, c, :, seq_width + 2:seq_width + 3] = head_x[:, 7:8] #Gantry
-            y_data[r,c]=y[c+1]
-            y1_data[r, c] = y1[c + 1]
+            y_data[r,c]=y[c+1] #
+            y1_data[r, c] = y1[c + 1]#
+            """
+              seq_width=3
+               ________
+            1 |1  2  3 |    |
+            2 |4  5  6 |    |    
+            3 |7  8  9 |    |
+            4 |10 11 12|    seq_length = 7 
+            4 |13 14 15|    |
+            4 |16 17 18|    |
+            4 |19 20 21|    |
+            4 |22 23 24|  <--y_1 | exactly we want to know c+1 porin at y_1
+            5 |________|
+            6  c c+1 c+2  <-- y  | exactly we want to know c+1 point at y  
+             
+             ** if you want to chang seq_width , you should change [c + 1 ]
+            """
+
 
     print 'x with B C G data shape : {} '.format(np.shape(x_BCG_data))
     #print x_BCG_data[0, 0, :, 3]
     #print x_BCG_data[1, 0, :, 3]
     #print x_BCG_data[0, 1, :, 3]
     #print heads[:14, 3:4]
-
-
-
     np.save(os.path.join(folder_path, 'x_data_BCG.npy'), x_BCG_data)
     np.save(os.path.join(folder_path ,'x_data.npy'), x_data)
     np.save(os.path.join(folder_path, 'y_data.npy'), y_data)
@@ -70,9 +84,9 @@ def get_trainingData(folder_path , seq_length=7 , seq_width=3 ,save_is=True):
         print 'ap shape :', np.shape(ep_)
         print 'ep shape :', np.shape(ap_)
         print '###check###'
-        print y1_data[0]
-        print y_data[0]
-        print x_data[0]
+        print 'y1 sample data : ',y1_data[0]
+        print 'y sample data : ', y_data[0]
+        print 'x sample data : ',x_data[0]
     return x_data , y_data , y1_data
 
 
