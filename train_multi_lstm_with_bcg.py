@@ -11,8 +11,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--leaf_num' ,'-l' , type=int ,help='which leaf_num you want to train')
 parser.add_argument('--check_point' ,'-c' , type=int ,help='')
 parser.add_argument('--save_folder_name' , help='model/save_folder_name/... , logs/save_folder_name/.. , graph/save_folder_name/...')
+parser.add_argument('--bcg' ,dest ='use_bcg',action='store_true' , help='add bcg info to x data?')
+parser.add_argument('--no_bcg' , dest ='use_bcg' , action='store_false', help='add bcg info to x data?')
 
-parser.save_folder_name=''
 args=parser.parse_args()
 
 assert args.leaf_num == None  or args.check_point == None   , 'please input check_point or leaf num'
@@ -54,10 +55,10 @@ print 'train :',len(dir_paths[:n_train])
 #            './divided_log/A20170620103113_RT02468']
 #test_xs, test_ys = data.merge_all_data(TEST_SET)
 #plt.plot(range(len(test_ys)), test_ys[:, leaf_num])
-test_xs, test_ys = data.merge_all_data(dir_paths[n_train:] , True )
+test_xs, test_ys = data.merge_all_data(dir_paths[n_train:] , args.use_bcg )
 plt.savefig('tmp.png')
 plt.show()
-train_xs, train_ys = data.merge_all_data(dir_paths[:n_train] , True )
+train_xs, train_ys = data.merge_all_data(dir_paths[:n_train] , args.use_bcg )
 
 if __debug__ == True:
     print 'shape train xs', np.shape(train_xs)
@@ -157,11 +158,14 @@ train = optimizer.minimize(loss, name='train_op')
 
 if not os.path.isdir('./graph'):
     os.mkdir('./graph')
+if not os.path.isdir(os.path.join('./graph' , args.save_folder_name)):
+    os.mkdir(os.path.join('./graph' , args.save_folder_name))
+
 with tf.Session() as sess:
     merged = tf.summary.merge_all()
     saver = tf.train.Saver(max_to_keep=100000)
-    train_writer = tf.summary.FileWriter(logdir='./logs/train')
-    test_writer = tf.summary.FileWriter(logdir='./logs/test')
+    train_writer = tf.summary.FileWriter(logdir=os.path.join('./logs' , args.save_folder_name , '/train'))
+    test_writer = tf.summary.FileWriter(logdir=os.path.join('./logs' , args.save_folder_name , '/test'))
     init = tf.global_variables_initializer()
     sess.run(init)
     # Training step
@@ -191,9 +195,13 @@ with tf.Session() as sess:
                 test_writer.add_summary(merged_summaries, i) # merged_summaries loss , learning rate
 
                 utils.plot_xy(test_predict=test_predict, test_ys=test_ys,
-                              savename='./graph/dynalog_result_normalize_' + str(i) + '.png')
+                              savename=os.path.join('./graph', args.save_folder_name,
+                                                    'dynalog_result_normalize_' + str(i) + '.png'))
+
                 utils.plot_xy(test_predict=test_predict * normalize_factor, test_ys=test_ys * normalize_factor,
-                              savename='./graph/dynalog_result_orignal_' + str(i) + '.png')
+                              savename=os.path.join('./graph', args.save_folder_name,
+                                                    'dynalog_result_orignal_' + str(i) + '.png'))
+
                 acc_1 = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
                                                pred=test_predict * normalize_factor, error_range_percent=1)
                 acc_2 = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
@@ -231,17 +239,22 @@ with tf.Session() as sess:
                     best_acc = acc
                     tmp_loss = test_loss
                     saver.save(sess=sess,
-                               save_path='./models/acc_{}_loss_{}'.format(str(best_acc)[:4], str(tmp_loss)[:4]),
+                               save_path=os.path.join('./models', args.save_folder_name, \
+                                                      'acc_{}_loss_{}'.format(str(best_acc)[:4], str(tmp_loss)[:4])),
                                global_step=i)
+
                     print 'model saved'
                 elif best_acc == acc:
                     if best_loss > test_loss:
                         best_loss = test_loss
-                        saver.save(sess=sess, save_path='./models/acc_{}_loss_{}.ckpt'.format(str(best_acc)[:4],
-                                                                                              str(best_loss)[:4]),
+                        saver.save(sess=sess, save_path=os.path.join('./models/', args.save_folder_name, \
+                                                                     'acc_{}_loss_{}.ckpt'.format(str(best_acc)[:4],
+                                                                                                  str(best_loss)[:4])),
                                    global_step=i)
                         print 'model saved'
-                saver.save(sess=sess, save_path='./models/{}'.format(str(i), global_step=i))
+                saver.save(sess=sess, save_path=os.path.join('./models',args.save_folder_name ,'{}'.format(str(i)))\
+                                                             ,global_step=i)
+
             _, train_loss, merged_summaries = sess.run([train, loss, merged],
                                                        feed_dict={x_: train_xs, y_: train_ys, lr_: learning_rate})
             train_writer.add_summary(merged_summaries, i)
@@ -258,13 +271,14 @@ with tf.Session() as sess:
         test_ys = test_ys * normalize_factor
         analysis.analysis_result(true=test_ys, pred=pred, error_range_percent=5)
         test_ys = test_ys * (max_ - min_) + min_
-        utils.plot_xy(test_predict=test_predict, test_ys=test_ys, savename='./dynalog_result_last' + '.png')
+        utils.plot_xy(test_predict=test_predict, test_ys=test_ys, savename='./dynalog_result_last_'+args.save_folder_name + '.png')
         print '########'
         print test_ys[:10]
         print test_predict[:10]
         sess.close()
         print 'start evaluation'
         eval.eval(x=test_xs, y=test_ys, error_range_percent=5,
-                  model_path='./models/acc_{}_loss_{}-100'.format(str(best_acc)[:4], str(tmp_loss)[:4]))
+                  model_path=os.path.join('./models', args.save_folder_name,
+                                          'acc_{}_loss_{}-100'.format(str(best_acc)[:4], str(tmp_loss)[:4])))
 
         # np.save('./test_ep.npy',test_xs[])
