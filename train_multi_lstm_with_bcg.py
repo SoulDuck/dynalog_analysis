@@ -17,7 +17,7 @@ parser.add_argument('--no_bcg' , dest ='use_bcg' , action='store_false', help='a
 
 args=parser.parse_args()
 
-assert args.leaf_num == None  or args.check_point == None   , 'please input check_point or leaf num'
+assert args.leaf_num != None  or args.check_point != None   , 'please input check_point or leaf num'
 
 if "DISPLAY" not in os.environ:
     # remove Travis CI Error
