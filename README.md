@@ -8,8 +8,8 @@
 
 ## 2.Dynalog Preprocessing 
 
-![Alt Text](./pic/5.png)
-![Alt Text](./pic/3.png)
+![Alt Text](./pic/7.png)
+
 
 
 
