@@ -167,7 +167,7 @@ if not os.path.isdir(os.path.join('./graph' , args.save_folder_name)):
 
 with tf.Session() as sess:
     merged = tf.summary.merge_all()
-    saver = tf.train.Saver(max_to_keep=100000)
+    saver = tf.train.Saver(max_to_keep=1000)
     train_writer = tf.summary.FileWriter(logdir=os.path.join('./logs' , args.save_folder_name , 'train'))
     test_writer = tf.summary.FileWriter(logdir=os.path.join('./logs' , args.save_folder_name , 'test'))
     init = tf.global_variables_initializer()
