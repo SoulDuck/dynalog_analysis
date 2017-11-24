@@ -8,13 +8,13 @@
 
 ## 2.Dynalog Preprocessing 
 
-![Alt Text](./pic/5.png)
-![Alt Text](./pic/3.png)
+![Alt Text](./pic/7.png)
 
 
 
 
-![Alt Text](./pic/6.png)
+
+
 
 # Result
 acc\leaf_num| 1 |2 | 3 | 4 | 5| 6 | 7 |8|9|10|11|12|13|14|15|16|17|18|19|
