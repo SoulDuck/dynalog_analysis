@@ -13,6 +13,8 @@ parser.add_argument('--leaf_num' ,'-l' , type=int ,help='which leaf_num you want
 parser.add_argument('--check_point' ,'-c' , type=int ,help='')
 args=parser.parse_args()
 
+assert args.leaf_num == None  or args.check_point == None   , 'please input check_point or leaf num'
+
 if "DISPLAY" not in os.environ:
     # remove Travis CI Error
     matplotlib.use('Agg')
