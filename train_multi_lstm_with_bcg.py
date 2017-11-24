@@ -130,7 +130,7 @@ data_dim = n_col # bcg flag True n_col =6 or n_col=3
 hidden_dim = 30
 output_dim = 1
 init_lr = 0.01
-reduced_lr1 = 20000
+reduced_lr1 = 1000 #pretrained
 reduced_lr2 = 50000
 reduced_lr3 = 80000
 if debug_flag_test:
