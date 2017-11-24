@@ -20,7 +20,8 @@ parser.add_argument('--no_debug' , dest ='debug_test' , action='store_false', he
 
 args=parser.parse_args()
 
-assert args.leaf_num != None  or args.check_point != None   , 'please input check_point or leaf num'
+assert args.leaf_num != None or args.leaf_num != 0  or args.check_point != None   , 'please input check_point or leaf num'
+
 
 if "DISPLAY" not in os.environ:
     # remove Travis CI Error
