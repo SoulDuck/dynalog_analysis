@@ -4,6 +4,14 @@ import numpy as np
 import os, sys, glob
 import matplotlib
 import analysis
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--leaf_num' ,'-l' , type=int ,help='which leaf_num you want to train')
+parser.add_argument('--check_point' ,'-c' , type=int ,help='')
+args=parser.parse_args()
+
 
 if "DISPLAY" not in os.environ:
     # remove Travis CI Error
@@ -22,7 +30,7 @@ debug_flag_test = False
 if __debug__ == debug_flag_lv0:
     print '###debug | train.py |'
 
-leaf_num = 30
+leaf_num = args.leaf_num
 n_train = -3
 batch_size = 60
 root_path, names, files = os.walk('./divided_log').next()
@@ -168,7 +176,7 @@ with tf.Session() as sess:
                 learning_rate = 0.0001
             else:
                 learning_rate = 0.00001
-            if i % check_point == 0:
+            if i % args.check_point == 0:
                 # batch_xs , batch_ys = data.next_batch(train_xs , train_ys , batch_size)
                 # print np.shape(batch_xs) , np.shape(batch_ys)
                 test_predict, outputs_, test_loss, merged_summaries = sess.run([pred, outputs, loss, merged],

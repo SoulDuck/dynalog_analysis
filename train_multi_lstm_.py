@@ -70,6 +70,7 @@ print "########################"
 print '##### directory paths #####'
 print dir_paths[n_train:]
 train_xs, train_ys, test_xs, test_ys = list(data.get_specified_leaf(leaf_num, train_xs, train_ys, test_xs, test_ys))
+#30번째 leaf을 불러온다, 만약 width의 길이가 바뀌면  가 바뀌면 위 코드도 수정되어야 한다
 ep = data.get_ep_all(dir_paths[n_train:], leaf_n=leaf_num)
 
 """ ep 하고 ap 는 데이터를 만들때 7개의 row 을 힉습시키고 그 다음 위치를 예측하는 형태로 x_data , y_data 을 만들었다
