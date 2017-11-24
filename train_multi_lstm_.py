@@ -4,6 +4,13 @@ import numpy as np
 import os, sys, glob
 import matplotlib
 import analysis
+import argparse
+
+parser = argparse.ArgumentParser()
+
+
+parser.add_argument('--leaf_num' ,'-l' , type=int ,help='which leaf_num you want to train')
+args=parser.parse_args()
 
 if "DISPLAY" not in os.environ:
     # remove Travis CI Error
@@ -119,7 +126,7 @@ if debug_flag_test:
     iterations = 101
 else:
     iterations = 150000
-check_point = 100
+check_point = 1
 n_cell = 3
 
 x_ = tf.placeholder(tf.float32, [None, seq_length, data_dim], name='x_')
