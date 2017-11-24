@@ -34,16 +34,16 @@ def get_trainingData(folder_path , seq_length=7 , seq_width=3 ,save_is=True):
     for r in range(n_length-seq_length-1):
         x=ep_[r:r+seq_length] #(7,60)
         y=ap_[r+seq_length] #(7,60)
-        y1= ap_[r + seq_length+1] #(7,60)
+        y1= ap_[r + seq_length-1] #(7,60)
         head_x=heads[r:r+seq_length]
 
         for c in range(n_leaf-seq_width+1):
             x_data[r, c,:,:]=x[:,c:c+seq_width]
             x_BCG_data[r,c,:,:seq_width]=x[:,c:c+seq_width]
             x_BCG_data[r, c, :, seq_width :]
-            x_BCG_data[r, c, :, seq_width:seq_width + 1] = head_x[:, 3:4]
-            x_BCG_data[r, c, :, seq_width+1:seq_width + 2] = head_x[:, 6:7]
-            x_BCG_data[r, c, :, seq_width + 2:seq_width + 3] = head_x[:, 7:8]
+            x_BCG_data[r, c, :, seq_width:seq_width + 1] = head_x[:, 3:4] # BeamOfOff
+            x_BCG_data[r, c, :, seq_width+1:seq_width + 2] = head_x[:, 6:7] #Colimator
+            x_BCG_data[r, c, :, seq_width + 2:seq_width + 3] = head_x[:, 7:8] #Gantry
             y_data[r,c]=y[c+1]
             y1_data[r, c] = y1[c + 1]
 

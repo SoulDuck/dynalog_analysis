@@ -135,11 +135,6 @@ def analysis_dinalog():
     :return: 
     """
 
-
-
-
-
-
 def get_acc(true , pred  , error_range_percent):
     assert len(true) == len(pred)
     true_count = 0;
