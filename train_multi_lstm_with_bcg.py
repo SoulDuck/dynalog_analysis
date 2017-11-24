@@ -168,8 +168,8 @@ if not os.path.isdir(os.path.join('./graph' , args.save_folder_name)):
 with tf.Session() as sess:
     merged = tf.summary.merge_all()
     saver = tf.train.Saver(max_to_keep=100000)
-    train_writer = tf.summary.FileWriter(logdir=os.path.join('./logs' , args.save_folder_name , '/train'))
-    test_writer = tf.summary.FileWriter(logdir=os.path.join('./logs' , args.save_folder_name , '/test'))
+    train_writer = tf.summary.FileWriter(logdir=os.path.join('./logs' , args.save_folder_name , 'train'))
+    test_writer = tf.summary.FileWriter(logdir=os.path.join('./logs' , args.save_folder_name , 'test'))
     init = tf.global_variables_initializer()
     sess.run(init)
     # Training step
@@ -251,7 +251,7 @@ with tf.Session() as sess:
                 elif best_acc == acc:
                     if best_loss > test_loss:
                         best_loss = test_loss
-                        saver.save(sess=sess, save_path=os.path.join('./models/', args.save_folder_name, \
+                        saver.save(sess=sess, save_path=os.path.join('./models', args.save_folder_name, \
                                                                      'acc_{}_loss_{}.ckpt'.format(str(best_acc)[:4],
                                                                                                   str(best_loss)[:4])),
                                    global_step=i)
