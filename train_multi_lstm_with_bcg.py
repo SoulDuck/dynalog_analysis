@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--leaf_num' ,'-l' , type=int ,help='which leaf_num you want to train')
 parser.add_argument('--check_point' ,'-c' , type=int ,help='')
 parser.add_argument('--save_folder_name' , help='model/save_folder_name/... , logs/save_folder_name/.. , graph/save_folder_name/...')
+
 parser.add_argument('--bcg' ,dest ='use_bcg',action='store_true' , help='add bcg info to x data?')
 parser.add_argument('--no_bcg' , dest ='use_bcg' , action='store_false', help='add bcg info to x data?')
 
