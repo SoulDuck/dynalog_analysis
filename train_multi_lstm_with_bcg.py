@@ -15,6 +15,9 @@ parser.add_argument('--save_folder_name' , help='model/save_folder_name/... , lo
 parser.add_argument('--bcg' ,dest ='use_bcg',action='store_true' , help='add bcg info to x data?')
 parser.add_argument('--no_bcg' , dest ='use_bcg' , action='store_false', help='add bcg info to x data?')
 
+parser.add_argument('--debug' ,dest ='debug_test',action='store_true' , help='add bcg info to x data?')
+parser.add_argument('--no_debug' , dest ='debug_test' , action='store_false', help='add bcg info to x data?')
+
 args=parser.parse_args()
 
 assert args.leaf_num != None  or args.check_point != None   , 'please input check_point or leaf num'
@@ -32,7 +35,7 @@ import eval
 debug_flag_lv0 = False
 debug_flag_lv1 = True
 debug_flag_lv2 = False
-debug_flag_test = False
+debug_flag_test = True
 if __debug__ == debug_flag_lv0:
     print '###debug | train.py |'
 
@@ -44,11 +47,11 @@ dir_paths = map(lambda name: os.path.join(root_path, name), names)
 
 print 'dir paths : ', dir_paths[:]
 print 'length', len(dir_paths)
-"""if debug_flag_test:
-    dir_paths = dir_paths[:]
+if debug_flag_test:
+    dir_paths = dir_paths[:8]
 else:
-    dir_paths = dir_paths[:5]
-"""
+    dir_paths = dir_paths[:]
+
 print 'test :',len(dir_paths[n_train:])
 print 'train :',len(dir_paths[:n_train])
 
