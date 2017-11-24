@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser()
 
 
 parser.add_argument('--leaf_num' ,'-l' , type=int ,help='which leaf_num you want to train')
+parser.add_argument('--check_point' ,'-c' , type=int ,help='')
 args=parser.parse_args()
 
 if "DISPLAY" not in os.environ:
@@ -29,7 +30,7 @@ debug_flag_test = False
 if __debug__ == debug_flag_lv0:
     print '###debug | train.py |'
 
-leaf_num = 30
+leaf_num = args.leaf_num
 n_train = -3
 batch_size = 60
 root_path, names, files = os.walk('./divided_log').next()
@@ -126,7 +127,7 @@ if debug_flag_test:
     iterations = 101
 else:
     iterations = 150000
-check_point = 1
+check_point = args.check_point
 n_cell = 3
 
 x_ = tf.placeholder(tf.float32, [None, seq_length, data_dim], name='x_')
