@@ -136,7 +136,7 @@ reduced_lr3 = 80000
 if debug_flag_test:
     iterations = 101
 else:
-    iterations = 150000
+    iterations = 50000
 check_point = 100
 n_cell = 3
 
