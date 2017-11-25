@@ -148,7 +148,7 @@ def get_acc(true , pred  , error_range_percent):
 
 
 def get_acc_with_ep(ep ,true , pred  , error_range_percent):
-    assert np.max(pred) >=1.
+    #assert np.max(pred) >=1.
 
     if debug_lv0:
         print 'analysis.py | get_acc_with_ep '

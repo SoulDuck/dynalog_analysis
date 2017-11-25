@@ -92,6 +92,7 @@ assert len(ep) == len(test_ys), len(test_ys)
 
 min_, max_ = data.get_min_max(train_xs, train_ys, test_xs, test_ys)
 print 'min', min_, 'max', max_
+assert max_ != 0
 
 normalize_factor = 10000.
 train_xs = train_xs / normalize_factor
@@ -219,7 +220,9 @@ with tf.Session() as sess:
                                                pred=test_predict * normalize_factor, error_range_percent=5)
                 acc_6 = analysis.get_acc_with_ep(ep=ep, true=test_ys * normalize_factor,
                                                pred=test_predict * normalize_factor, error_range_percent=6)
-                acc=acc_3
+
+                acc=acc_3 # ** which accuracy is standard ?
+
                 print("[error range 1 : step: {}] test acc: {}".format(i, acc_1))
                 print("[error range 2 : step: {}] test acc: {}".format(i, acc_2))
                 print("[error range 3 : step: {}] test acc: {}".format(i, acc_3))
